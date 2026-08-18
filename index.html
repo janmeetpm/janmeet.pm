@@ -95,6 +95,13 @@ button{font:inherit}
   padding:4px 8px;cursor:pointer;flex:0 0 auto;
   box-shadow:0 0 8px var(--glow);
 }
+.hamb{
+  display:none;
+  background:none;border:var(--hair) solid var(--line-2);color:var(--mid);
+  font-family:var(--mono);font-size:15px;line-height:1;
+  padding:5px 9px;cursor:pointer;flex:0 0 auto;
+}
+.hamb[aria-expanded="true"]{border-color:var(--amber);color:var(--amber)}
 .themebtn:hover,.themebtn:focus-visible{
   border-color:var(--amber);color:var(--amber);
   box-shadow:0 0 0 1px var(--glow), 0 0 12px var(--glow-strong);
@@ -296,14 +303,21 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   .sugg button{flex:1 1 100%;border-right:0;border-bottom:var(--hair) solid var(--line)}
   .ladder{font-size:10px;padding:12px 10px;overflow-x:hidden}
 
-  /* six tabs wrapped ragged; an even grid keeps the column rules aligned */
-  nav.cmds{display:grid;grid-template-columns:repeat(3,1fr);border-left:0;border-right:0}
-  nav.cmds button{
-    padding:11px 6px;text-align:center;font-size:10.5px;
-    border-bottom:var(--hair) solid var(--line);
+  /* Six tabs cost two rows of sticky chrome on a phone. Behind the
+     hamburger they cost none, and each row gets a full-width tap target. */
+  .hamb{display:inline-flex;align-items:center;justify-content:center}
+  nav.cmds{
+    display:none;position:fixed;top:37px;left:0;right:0;z-index:21;margin:0;
+    grid-template-columns:1fr;border-top:var(--hair) solid var(--line);
+    border-bottom:var(--hair) solid var(--line-2);
+    max-height:calc(100vh - 37px);overflow-y:auto;
   }
-  nav.cmds button:nth-child(3n){border-right:0}
-  nav.cmds button:nth-child(n+4){border-bottom:0}
+  body.navopen nav.cmds{display:grid}
+  nav.cmds button{
+    text-align:left;padding:15px var(--pad);font-size:12px;
+    border-right:0;border-bottom:var(--hair) solid var(--line);
+  }
+  nav.cmds button:last-child{border-bottom:0}
 
   .turn{padding:13px 13px;gap:9px}
   .chat{margin-bottom:22px}
@@ -319,13 +333,6 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   .status span{padding:7px 10px}
   .status span.who{display:none}
 }
-@media (max-width:340px){
-  nav.cmds{grid-template-columns:repeat(2,1fr)}
-  nav.cmds button:nth-child(3n){border-right:var(--hair) solid var(--line)}
-  nav.cmds button:nth-child(2n){border-right:0}
-  nav.cmds button:nth-child(n+4){border-bottom:var(--hair) solid var(--line)}
-  nav.cmds button:nth-child(n+5){border-bottom:0}
-}
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
@@ -340,6 +347,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
     <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
     <span class="path">~/<b>janmeet-s-makkar</b>/portfolio — <span id="cwd">about</span></span>
     <button class="themebtn" id="themebtn" type="button">theme: light</button>
+    <button class="hamb" id="hamb" type="button" aria-label="sections menu" aria-expanded="false" aria-controls="nav-cmds">&#8801;</button>
   </div>
 
   <!-- ============ MASTHEAD ============ -->
@@ -356,7 +364,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
       <div class="r"><div class="k">status</div><div class="v"><span class="live">● open</span> — remote, worldwide</div></div>
     </div>
 
-    <nav class="cmds" role="tablist" aria-label="sections">
+    <nav class="cmds" id="nav-cmds" role="tablist" aria-label="sections">
       <button role="tab" data-tab="about" class="on"><span class="d">01/</span> about</button>
       <button role="tab" data-tab="systems"><span class="d">02/</span> systems</button>
       <button role="tab" data-tab="artifacts"><span class="d">03/</span> artifacts</button>
@@ -683,9 +691,31 @@ function show(name,push){
   document.getElementById('cwd').textContent=name;
   document.getElementById('st-tab').textContent=names[name];
   if(push){try{history.replaceState(null,'','?tab='+name);}catch(e){}}
+  setNav(false);
   if(name==='about') render(mode);
 }
 tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab,true);});});
+
+/* ---------------- mobile drawer ---------------- */
+var hamb=document.getElementById('hamb'), nav=document.getElementById('nav-cmds');
+function navOpen(){return document.body.classList.contains('navopen');}
+function setNav(open){
+  document.body.classList.toggle('navopen',open);
+  hamb.setAttribute('aria-expanded',open?'true':'false');
+  hamb.innerHTML=open?'&#215;':'&#8801;';
+}
+hamb.addEventListener('click',function(e){
+  e.stopPropagation();
+  var open=!navOpen();
+  setNav(open);
+  if(open){var f=nav.querySelector('button.on')||nav.querySelector('button');if(f)f.focus();}
+});
+document.addEventListener('click',function(e){
+  if(navOpen()&&!nav.contains(e.target)&&e.target!==hamb) setNav(false);
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&navOpen()){setNav(false);hamb.focus();}
+});
 document.querySelectorAll('[data-go]').forEach(function(b){
   b.addEventListener('click',function(){show(b.dataset.go,true);window.scrollTo({top:0,behavior:'smooth'});});
 });
