@@ -62,6 +62,15 @@ step as you scroll. The nav sits in `.topbar` together with the terminal chrome 
 sticky unit — do not re-split them, and do not hardcode the bar's height (JS measures it into
 `--stick` / `--chrome-h`).
 
+**Below 620px the sections fold** (2026-08-18): the page opens as a listing of section rules
+with one open, ~2.7 screens instead of ~12. The section rule *is* the toggle — JS swaps each
+panel's first `.rule` for a `<button class="rule rule-t">` on every viewport and moves the rest
+of the panel into `.pbody`, so there is one DOM; above 620px the button is disabled and renders
+identically to the div it replaced. Desktop is untouched by design. The phone also gets a
+2px amber scroll-progress line on the top bar. `DESIGN.md` → Responsive has the full contract,
+including why load-time folds must not animate and why the two gestures (nav jump = exclusive,
+rule tap = additive) differ.
+
 | section | id | content |
 |---|---|---|
 | 01 about | `p-about` | chat-framed intro + ASCII turn-budget meter |

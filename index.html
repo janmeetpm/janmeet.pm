@@ -972,6 +972,10 @@ window.addEventListener('scroll',function(){if(!spyRaf)spyRaf=requestAnimationFr
 var FOLD_Q=window.matchMedia('(max-width:620px)');
 var panels={}, openNames={};
 function folding(){return FOLD_Q.matches;}
+/* the breakpoint is watched twice on purpose: the debounced resize handler
+   below is the one that always fires, and `change` is the one that fires
+   immediately. syncFolds() is idempotent, so double-firing costs nothing. */
+if(FOLD_Q.addEventListener) FOLD_Q.addEventListener('change',function(){syncFolds();measureStick();});
 
 order.forEach(function(name){
   var p=document.getElementById('p-'+name);

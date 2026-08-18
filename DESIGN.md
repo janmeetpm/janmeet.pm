@@ -265,8 +265,47 @@ sheen and the active-tab glow, nothing more. Do not make an affordance *depend* 
 | breakpoint | change |
 |---|---|
 | ≤900px | frame loses its left/right border |
-| ≤620px | entry grids collapse to one column; nav becomes a hamburger drawer; contact rows go full width; the redundant statusline cell is hidden |
+| ≤620px | entry grids collapse to one column; nav becomes a hamburger drawer; **sections fold**; a scroll-progress line appears on the top bar; contact rows go full width; the redundant statusline cell is hidden |
 | ≤340px | (nothing — the former two-column nav grid was replaced by the drawer) |
+
+**Sections fold, on the phone only.** Seven stacked sections is ~12 screens of scroll at
+375px, and the shape of the site — how many sections there are, what they are — was only
+legible after scrolling all of it. Folded it opens at ~2.7 screens: a listing you can read at
+a glance and expand a row at a time. Desktop is deliberately untouched.
+
+- **The section rule is the control.** JS replaces each panel's first `.rule` div with a
+  `<button class="rule rule-t">` on *every* viewport, and moves everything after it into
+  `.pbody-w > .pbody`. One DOM, no phone-only markup. Above 620px the button is `disabled`
+  and `.rule-t` resets it back to being indistinguishable from the div it replaced — if you
+  touch `.rule-t`, check the desktop rule still renders identically.
+- The only added affordance is a boxed mono `+` / `−` at the right end of the rule
+  (`.tw`, `order:1` so it lands after the rule's flex-grown `::after` hairline). Amber when
+  closed, dim when open. `display:none` above 620px.
+- **Fold height is `grid-template-rows: 1fr → 0fr`**, so nothing has to know a section's
+  height. `.pbody` carries `overflow:hidden` and the `visibility:hidden` that takes folded
+  content out of the tab order — `display:none` would kill the transition.
+- **`body.nofoldanim` suppresses the transition** and is used for every fold the reader did
+  not ask for: page load, breakpoint crossing, and nav jumps. Load-time folds must not depend
+  on a transition finishing — a backgrounded tab leaves it paused mid-ease and the section
+  stays open.
+- **Two gestures, deliberately different.** A nav item / `data-go` link opens its section and
+  folds the rest, because a jump is a destination and leaving the last section open behind you
+  is how the phone grows back into one long scroll. Tapping a rule directly is additive and
+  leaves the others alone.
+- `openNames` remembers the open set across breakpoint crossings; `syncFolds()` applies it, or
+  strips the folded state entirely above 620px, and is idempotent. It runs from the debounced
+  `resize` handler *and* a `matchMedia` `change` listener — resize is the one that always
+  fires, `change` is the one that fires immediately.
+- The scrollspy's "end of document belongs to the last section" rule is **conditional on
+  contact being open**. Folded, the whole page can be shorter than the viewport, and that rule
+  would hand every scroll position to contact.
+- `?tab=` deep links still work: exactly one section is open on arrival, the linked one.
+- No JS, no folds — every section stays open, as before.
+
+**The scroll-progress line** is `.topbar::after`: two amber pixels over the chrome's bottom
+hairline, width from `--prog`, set in the same rAF-throttled `spy()` that owns the active
+section. Phone only, because a phone has no scrollbar to read. It is the one place a bare
+amber fill is allowed outside an interactive surface.
 
 **The hamburger drawer** reuses `nav.cmds` itself — it is not a second nav. On mobile that
 element becomes `position:fixed` under the chrome, one full-width row per section. There is
