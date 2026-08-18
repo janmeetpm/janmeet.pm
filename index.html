@@ -10,6 +10,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://janmeet.pm">
 <meta property="og:image" content="https://janmeet.pm/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Terminal window: ai pm building enterprise agent platforms that survive production. Founding PM, AI at Nugget.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://janmeet.pm">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -243,6 +246,14 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 }
 .rule::before{content:'';width:16px;height:var(--hair);background:var(--line-2);flex:0 0 16px}
 .rule::after{content:'';flex:1;height:var(--hair);background:var(--line)}
+/* A section rule is a real <button> on every viewport (JS swaps it in) so the
+   phone fold has something to hang off. On desktop it is `disabled` and must
+   be indistinguishable from the div it replaced. */
+.rule-t{
+  -webkit-appearance:none;appearance:none;background:none;border:0;
+  width:100%;padding:0;text-align:left;color:var(--dim);cursor:default;
+}
+.rule-t .tw{display:none}
 .rule b{color:var(--amber);font-weight:400}
 
 .lead{font-family:var(--disp);font-weight:500;font-size:clamp(14px,1.9vw,17px);letter-spacing:-.035em;line-height:1.5;margin:0 0 14px;max-width:46ch;text-transform:lowercase}
@@ -476,6 +487,53 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 @media (max-width:620px){
   /* the nav collapses into the drawer, so only the chrome bar is sticky */
   .panel{scroll-margin-top:var(--stick,46px)}
+
+  /* ---- sections fold ----
+     Seven sections in one column is roughly a dozen screens of phone scroll,
+     and the whole shape of the site — how many sections, what they are — was
+     only legible by scrolling the whole thing. Folded, the page opens as a
+     listing you can read at a glance and expand one row at a time. Desktop is
+     untouched: this media query owns whether folds exist, JS only keeps state.
+
+     The section rule doubles as the fold control, so the phone gains a tap
+     target without gaining a component: same hairline row, same index, plus a
+     boxed +/- at the right end. */
+  .rule-t{
+    cursor:pointer;margin:0;padding:16px 0 15px;
+    border-top:var(--hair) solid var(--line);
+  }
+  .panel .rule-t{margin-top:0}
+  .rule-t .tw{
+    display:inline-block;order:1;flex:0 0 auto;margin-left:11px;
+    border:var(--hair) solid var(--line-2);padding:1px 6px 2px;
+    font-family:var(--mono);font-size:11px;line-height:1.25;letter-spacing:0;
+    color:var(--amber);
+  }
+  .rule-t[aria-expanded="true"] .tw{color:var(--dim)}
+  .rule-t[aria-expanded="true"]{color:var(--mid)}
+
+  /* 0fr -> 1fr animates without anyone having to know the section's height.
+     visibility is what actually takes the folded content out of the tab
+     order — display:none would kill the transition. */
+  .pbody-w{
+    display:grid;grid-template-rows:1fr;
+    transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1);
+  }
+  .pbody{overflow:hidden;min-height:0;visibility:visible}
+  .panel.folded .pbody-w{grid-template-rows:0fr}
+  .panel.folded .pbody{visibility:hidden;transition:visibility 0s linear .3s}
+  .panel.folded{padding-bottom:0}
+  /* the first thing inside a section shouldn't add a second gap under the rule */
+  .pbody>:first-child{margin-top:16px}
+
+  /* scroll position, on the one bar that is always visible. Two amber pixels
+     over the chrome's bottom hairline — the only progress affordance on a
+     phone, where there is no scrollbar to read. */
+  .topbar::after{
+    content:'';position:absolute;left:0;bottom:0;height:2px;
+    width:var(--prog,0%);background:var(--amber);
+    box-shadow:0 0 8px var(--glow);pointer-events:none;
+  }
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}

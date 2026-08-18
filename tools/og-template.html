@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- Source for og.png. Rendered by tools/make-og.sh with headless Chrome so the
+     card uses the real Martian Mono / IBM Plex faces and the real backdrop,
+     rather than a system mono standing in for them. Not part of the build —
+     og.png is committed; this only exists so it can be rebuilt. -->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* the site's dark tokens, verbatim */
+:root{
+  --disp:'Martian Mono',ui-monospace,monospace;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --bg:#111010; --ink:#EDE7DC; --mid:#9A9287; --dim:#837C71;
+  --line:#2E2A27; --line-2:#3D3833; --amber:#F0A93B; --alert:#E4633C; --ok:#8FA76B;
+  --img-a:.40; --pane-top:rgba(17,16,16,.68); --pane-bot:rgba(17,16,16,.62);
+  --bar-a:rgba(17,16,16,.90);
+  --wash-top:rgba(255,255,255,.04); --wash-bot:rgba(0,0,0,.60);
+}
+*{box-sizing:border-box;margin:0}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{background:var(--bg);position:relative;font-family:var(--mono)}
+.bg{position:absolute;inset:0;background:url("../bg-grey.jpg") center center / cover no-repeat;opacity:var(--img-a)}
+.wash{position:absolute;inset:0;background:linear-gradient(180deg,var(--wash-top),var(--wash-bot))}
+/* the frame, inset like a terminal window on a desktop */
+.frame{
+  position:absolute;inset:46px 60px;border:1px solid var(--line);
+  background:linear-gradient(180deg,var(--pane-top),var(--pane-bot));
+  display:flex;flex-direction:column;
+}
+.chrome{
+  display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);
+  padding:13px 22px;font-size:15px;color:var(--dim);background:var(--bar-a);
+}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border:1px solid var(--line-2);display:block}
+.dots i:first-child{background:var(--alert);border-color:var(--alert)}
+.chrome b{color:var(--mid);font-weight:400}
+.body{flex:1;padding:40px 44px 0}
+.prompt{font-size:17px;color:var(--dim);margin-bottom:22px}
+.prompt .sig{color:var(--amber)}
+h1{
+  font-family:var(--disp);font-weight:700;font-size:44px;letter-spacing:-.05em;
+  line-height:1.16;color:var(--ink);text-transform:lowercase;max-width:20ch;
+}
+h1 .u{color:var(--amber)}
+.spec{margin-top:34px;border-top:1px solid var(--line);display:inline-block}
+.spec div{display:flex;border-bottom:1px solid var(--line);font-size:16px}
+.spec .k{width:150px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;font-size:13px;padding:9px 16px 9px 0;border-right:1px solid var(--line)}
+.spec .v{color:var(--mid);padding:9px 0 9px 16px}
+.spec .v b{color:var(--ink);font-weight:500}
+.status{
+  display:flex;border-top:1px solid var(--line);background:var(--bar-a);
+  font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+.status span{padding:11px 22px;border-right:1px solid var(--line)}
+.status span:last-child{border-right:0;margin-left:auto}
+.status .hl{color:var(--ok);font-weight:500}
+.status .hl::before{content:'●';margin-right:8px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wash"></div>
+<div class="frame">
+  <div class="chrome">
+    <div class="dots"><i></i><i></i><i></i></div>
+    <span>~/<b>janmeet-s-makkar</b>/portfolio</span>
+  </div>
+  <div class="body">
+    <p class="prompt"><span class="sig">➜</span> whoami</p>
+    <h1>ai pm building <span class="u">enterprise agent platforms</span> that survive production</h1>
+    <div class="spec">
+      <div><span class="k">role</span><span class="v"><b>founding pm, ai</b> · nugget (eternal ltd.)</span></div>
+      <div><span class="k">owns</span><span class="v">adherence · latency · cost/interaction · eval coverage</span></div>
+    </div>
+  </div>
+  <div class="status">
+    <span class="hl">always exploring new ai</span>
+    <span>janmeet.pm</span>
+  </div>
+</div>
+</body>
+</html>

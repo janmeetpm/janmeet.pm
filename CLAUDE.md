@@ -107,11 +107,18 @@ All four ART entries read `● in progress` with `href="#"`. Filling at least on
 most valuable change possible to this site. Until then it argues for the owner's
 thinking but every claim terminates at "trust me".
 
-### 2. Assets not yet in the repo
+### 2. Assets — done 2026-08-18
 
-- `favicon.ico`
-- `og.png` — 1200×630, referenced by the `og:image` tag. Without it, every LinkedIn
-  and Slack share renders as a blank grey box.
+`favicon.ico` (the masthead's amber block cursor on the dark surface, six pixel-exact
+sizes, 16–256) and `og.png` (1200×630) are both in the repo now, with `og:image:width`,
+`:height` and `:alt` declared so unfurls do not have to guess.
+
+Both are generated, and both regenerate from the repo — `python3 tools/make-favicon.py`
+and `sh tools/make-og.sh`. The OG card is rendered by **headless Chrome** from
+`tools/og-template.html` rather than drawn with PIL, so it uses the site's real Martian
+Mono and IBM Plex faces instead of a system mono standing in for them; the template
+duplicates the dark theme tokens, so update it when those change. Neither script runs on
+deploy — the outputs are committed.
 
 ## Deployment
 
@@ -119,8 +126,8 @@ Cloudflare Pages, connected to the GitHub repo `janmeetpm/janmeet.pm`. No build 
 output directory `/`. Every push to `main` redeploys. `_headers` sets baseline security
 headers — it is Cloudflare Pages config, not a build step.
 
-Files served besides `index.html`: `bg-grey.jpg` (the backdrop), `resume.pdf`,
-`legacy/index.html`. `tools/` and `experiments/` are not part of the deploy — `experiments/`
+Files served besides `index.html`: `bg-grey.jpg` (the backdrop), `og.png`,
+`favicon.ico`, `resume.pdf`, `legacy/index.html`. `tools/` and `experiments/` are not part of the deploy — `experiments/`
 is gitignored entirely.
 
 ## Git identity
