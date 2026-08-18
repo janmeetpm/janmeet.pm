@@ -272,13 +272,59 @@ a.ext:hover{border-bottom-style:solid;background:var(--bg-2)}
 a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 
 @media (max-width:620px){
+  /* Entries drop to one column. The label keeps its own hairline off so an
+     entry reads as one block: label, content, then a single rule to the
+     next entry — half the horizontal rules of the earlier stacked version. */
   .spec .r,.item,.job,.kit .r,.hob{grid-template-columns:1fr}
-  .spec .k,.item .idx,.job .meta,.kit .k,.hob .k{border-right:0;border-bottom:var(--hair) solid var(--line);padding:8px 0}
-  .item .body,.job .body,.kit .v,.hob .v,.spec .v{padding-left:0;padding-top:11px}
+  .spec .k,.item .idx,.job .meta,.kit .k,.hob .k{
+    border-right:0;padding:0;line-height:1.6;
+  }
+  .item .body,.job .body,.kit .v,.hob .v,.spec .v{padding-left:0;padding-top:7px}
+  .spec .r{padding:11px 0}
+  .spec .k,.spec .v{padding:0}
+  .item{padding:18px 0}
+  .job{padding:17px 0}
+  .kit .r,.hob{padding:14px 0}
+  .kit .k,.kit .v,.hob .k,.hob .v{padding-top:0;padding-bottom:0}
+  .kit .v,.hob .v{padding-top:7px}
+  /* index and dates sit inline rather than stacking into two short lines */
+  .item .idx b,.job .meta b,.hob .k b{display:inline;margin-bottom:0}
+  .item .idx b::after,.job .meta b::after,.hob .k b::after{content:'  ·  ';color:var(--line-2)}
+
   .kv>div{grid-template-columns:1fr;gap:2px}
   .kv dt{padding-top:0}
   .sugg button{flex:1 1 100%;border-right:0;border-bottom:var(--hair) solid var(--line)}
-  .ladder{font-size:10px}
+  .ladder{font-size:10px;padding:12px 10px;overflow-x:hidden}
+
+  /* six tabs wrapped ragged; an even grid keeps the column rules aligned */
+  nav.cmds{display:grid;grid-template-columns:repeat(3,1fr);border-left:0;border-right:0}
+  nav.cmds button{
+    padding:11px 6px;text-align:center;font-size:10.5px;
+    border-bottom:var(--hair) solid var(--line);
+  }
+  nav.cmds button:nth-child(3n){border-right:0}
+  nav.cmds button:nth-child(n+4){border-bottom:0}
+
+  .turn{padding:13px 13px;gap:9px}
+  .chat{margin-bottom:22px}
+  .meter-h{padding:9px 11px}
+  .meter-f{padding:9px 11px}
+
+  /* full-width rows: three mono links in a row left ~9px per cell */
+  .links a{flex:1 1 100%;text-align:left;border-right:0;border-bottom:var(--hair) solid var(--line);padding:13px 14px}
+  .links a:last-child{border-bottom:0}
+
+  /* the timezone cell used to wrap onto a second line under the frame */
+  .status{font-size:9px;letter-spacing:.06em}
+  .status span{padding:7px 10px}
+  .status span.who{display:none}
+}
+@media (max-width:340px){
+  nav.cmds{grid-template-columns:repeat(2,1fr)}
+  nav.cmds button:nth-child(3n){border-right:var(--hair) solid var(--line)}
+  nav.cmds button:nth-child(2n){border-right:0}
+  nav.cmds button:nth-child(n+4){border-bottom:var(--hair) solid var(--line)}
+  nav.cmds button:nth-child(n+5){border-bottom:0}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -598,7 +644,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 
   <div class="status">
     <span class="hl">open to work</span>
-    <span>janmeet-s-makkar</span>
+    <span class="who">janmeet-s-makkar</span>
     <span id="st-tab">01/06 about</span>
     <span>ist utc+5:30</span>
   </div>
@@ -652,15 +698,34 @@ document.querySelectorAll('a[href^="?tab="]').forEach(function(a){
 });
 
 /* ---------------- ASCII turn-budget meter ---------------- */
-var W=34; // bar cells
+var W=34; // bar cells — recomputed for narrow viewports by fitW()
+var LBL=16, MSW=7; // label cells, ms column cells
 var DATA={
   text:{stages:[
     {l:'retrieve',ms:90},{l:'reason',ms:420},{l:'tool call',ms:260},{l:'compose',ms:180}]},
   voice:{stages:[
     {l:'vad',ms:180},{l:'stt',ms:220},{l:'retrieve+reason',ms:510},{l:'tts',ms:140}]}
 };
-var mode='text', timer=null;
+var mode='text', timer=null, lastW=0;
 var ladder=document.getElementById('ladder');
+
+/* The row is LBL + W + 2 + MSW monospace cells wide. On a phone that
+   overran the frame and pushed the ms column off-screen behind a
+   horizontal scrollbar, so shrink the bar to whatever actually fits. */
+function fitW(){
+  var probe=document.createElement('span');
+  probe.className='lrow';
+  probe.style.position='absolute';
+  probe.style.visibility='hidden';
+  probe.textContent=rep('0',40);
+  ladder.appendChild(probe);
+  var cw=probe.getBoundingClientRect().width/40;
+  ladder.removeChild(probe);
+  if(!cw) return 34;
+  var pad=parseFloat(getComputedStyle(ladder).paddingLeft)+parseFloat(getComputedStyle(ladder).paddingRight);
+  var cells=Math.floor((ladder.clientWidth-pad)/cw);
+  return Math.max(12,Math.min(34,cells-LBL-2-MSW));
+}
 var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function pad(s,n){s=String(s);while(s.length<n)s+=' ';return s;}
@@ -670,6 +735,7 @@ function rep(c,n){var o='';for(var i=0;i<n;i++)o+=c;return o;}
 function render(m){
   mode=m;
   if(timer){clearInterval(timer);timer=null;}
+  W=fitW();lastW=W;
   var st=DATA[m].stages;
   var sum=st.reduce(function(a,s){return a+s.ms;},0);
   var plan=st.map(function(s){
@@ -689,15 +755,15 @@ function render(m){
 
   function paint(i,filled){
     var p=plan[i];
-    rows[i].innerHTML='<span class="lbl">'+pad(p.l,16)+'</span>'+
+    rows[i].innerHTML='<span class="lbl">'+pad(p.l,LBL)+'</span>'+
       '<span class="bar">'+rep('█',filled)+'</span>'+
       '<span class="rest">'+rep('·',p.n-filled)+rep(' ',W-p.n)+'</span>'+
-      '  <span class="ms">'+lpad(p.ms+'ms',7)+'</span>';
+      '  <span class="ms">'+lpad(p.ms+'ms',MSW)+'</span>';
   }
   function paintSum(done){
-    sumEl.innerHTML='<span class="lbl">'+pad('first token out',16)+'</span>'+
+    sumEl.innerHTML='<span class="lbl">'+pad('first token out',LBL)+'</span>'+
       '<span class="bar">'+rep(done?'━':' ',done?W:0)+'</span>'+rep(' ',done?0:W)+
-      '  <span class="ms">'+lpad(sum+'ms',7)+'</span>';
+      '  <span class="ms">'+lpad(sum+'ms',MSW)+'</span>';
   }
 
   if(reduce){
@@ -722,6 +788,15 @@ document.querySelectorAll('.seg button').forEach(function(b){
     document.querySelectorAll('.seg button').forEach(function(x){x.classList.toggle('on',x===b);});
     render(b.dataset.mode);
   });
+});
+
+var rzTimer=null;
+window.addEventListener('resize',function(){
+  if(rzTimer)clearTimeout(rzTimer);
+  rzTimer=setTimeout(function(){
+    var w=fitW();
+    if(w!==lastW){lastW=w;render(mode);}
+  },160);
 });
 
 /* ---------------- boot ---------------- */
