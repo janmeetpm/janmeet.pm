@@ -12,7 +12,7 @@ file, not an aspiration. If you change a rule here, change the CSS in the same c
 - **No border-radius.** Everything is hard-edged. No exceptions.
 - **No blur.** No `filter: blur()`, no backdrop-filter.
 - **One accent colour: amber** (`--amber`). Sage (`--ok`) is reserved *exclusively* for the
-  "open to work" status indicator. Red (`--alert`) is unused decoration in the window chrome.
+  `currently` status indicator. Red (`--alert`) is unused decoration in the window chrome.
 - **Never hardcode a colour.** Every colour is a variable defined in **both**
   `html[data-theme="dark"]` and `html[data-theme="light"]`. A new colour that exists in only
   one block is a bug.
@@ -58,7 +58,7 @@ choice persists in `localStorage` (`STORE = true`).
 | `--amber` | the one accent | `#F0A93B` | `#7E4A04` |
 | `--amber-dim` | muted accent | `#8A6425` | `#C79B57` |
 | `--alert` | chrome dot only | `#E4633C` | `#B33A17` |
-| `--ok` | **open-to-work status only** | `#8FA76B` | `#5C7238` |
+| `--ok` | **`currently` status indicator only** | `#8FA76B` | `#5C7238` |
 | `--inv-ink` | text on an amber fill | `#141210` | `#F6F3EB` |
 | `--glow` | 1px glow ring | `rgba(240,169,59,.30)` | `rgba(154,93,6,.30)` |
 | `--glow-strong` | glow bloom | `rgba(240,169,59,.55)` | `rgba(154,93,6,.52)` |
@@ -156,8 +156,8 @@ navigation or data.
 
 - **At most one amber-filled block per view.** Two filled blocks read as two competing CTAs
   and the page starts to look like a landing page.
-- **A status is not a CTA.** `open to work` in the statusline is sage `--ok` text with a `●`
-  marker — matching the `● open — remote, worldwide` treatment in the spec table — *not* a
+- **A status is not a CTA.** The statusline status is sage `--ok` text with a `●` marker —
+  matching the `● building` treatment in the spec table — *not* a
   filled slab. It was a filled amber slab once; it read as a button and was wrong.
 - **Emphasise with colour and weight, not with a fill.** The email is amber `--amber` text at
   weight 500 and one step up in size. That is enough.

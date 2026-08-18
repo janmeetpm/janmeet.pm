@@ -40,7 +40,7 @@ emphasis/CTA policy. Read it before any visual change. The rules below are the s
   text contrast depends on it; replace it only via `tools/prepare-backdrop.py` and
   re-measure. `DESIGN.md` → Backdrop has the numbers.
 - One accent colour only: amber (`--amber`). Sage green (`--ok`) is reserved
-  exclusively for the "open to work" status indicator. Red (`--alert`) is unused
+  exclusively for the `currently` status indicator. Red (`--alert`) is unused
   decoration in the window chrome.
 - Structure is hairline rules (`--hair`, 1px) forming visible column grids. Every
   content entry sits in a two-column layout: a fixed-width mono label column on the
@@ -140,4 +140,9 @@ git log -1 --format='%an <%ae>'
 - Verb precision in all copy: "Built" is reserved for work done hands-on; "Led",
   "Designed", "Owned", "Shipped" are distinct and deliberate. Do not upgrade a verb.
 - Never invent a metric, race time, grade, or date. Placeholder over plausible guess.
+- **Availability is framed as curiosity, not as a job hunt** (owner call, 2026-08-18).
+  The site says what is being built and pulled apart right now; it does not say "open to
+  work", "available for hire", or "seeking opportunities". The contact section mentions a
+  role as one of three things worth an email, not as the ask. Keep the door open, keep the
+  tone level.
 - Keep it one file. If a change seems to need a build step, say so and stop.
