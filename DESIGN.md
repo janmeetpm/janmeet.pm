@@ -42,7 +42,7 @@ a card, a heading or a panel is still wrong.
 
 ## Colour tokens
 
-Same token names in both themes. Light is the default (`<html data-theme="light">`); the
+Same token names in both themes. Dark is the default (`<html data-theme="dark">`); the
 choice persists in `localStorage` (`STORE = true`).
 
 | token | role | dark | light |

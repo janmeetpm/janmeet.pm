@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -819,7 +819,7 @@ function apply(m){
   btn.textContent='theme: '+m;
   if(STORE){try{localStorage.setItem('theme',m);}catch(e){}}
 }
-var init='light';
+var init='dark';
 if(STORE){try{var s=localStorage.getItem('theme');if(s)init=s;}catch(e){}}
 apply(init);
 btn.addEventListener('click',function(){
