@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>janmeet-s-makkar — ai pm / enterprise agent platforms</title>
+<meta name="description" content="AI product manager building enterprise LLM agent platforms: orchestration, adherence, evals, retrieval grounding, fine-tuning open models, and inference cost-latency economics.">
+<meta property="og:title" content="Janmeet Singh Makkar — AI PM, enterprise agent platforms">
+<meta property="og:description" content="Adherence, latency, cost per interaction, eval coverage. Founding AI PM at Nugget.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://janmeet.pm">
+<meta property="og:image" content="https://janmeet.pm/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://janmeet.pm">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===================== TOKENS ===================== */
+:root{
+  --disp:'Martian Mono',ui-monospace,monospace;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --col:860px;
+  --pad:clamp(16px,4vw,26px);
+  --hair:1px;
+}
+html[data-theme="dark"]{
+  --bg:#111010;
+  --bg-2:#181615;
+  --panel:#1B1918;
+  --ink:#EDE7DC;
+  --mid:#9A9287;
+  --dim:#6A635A;
+  --line:#2E2A27;
+  --line-2:#3D3833;
+  --amber:#F0A93B;
+  --amber-dim:#8A6425;
+  --alert:#E4633C;
+  --ok:#8FA76B;
+  --inv-ink:#141210;
+}
+html[data-theme="light"]{
+  --bg:#EFEBE1;
+  --bg-2:#E7E2D6;
+  --panel:#F6F3EB;
+  --ink:#181510;
+  --mid:#5A544A;
+  --dim:#8A8377;
+  --line:#D2CCBD;
+  --line-2:#BFB8A6;
+  --amber:#9A5D06;
+  --amber-dim:#C79B57;
+  --alert:#B33A17;
+  --ok:#5C7238;
+  --inv-ink:#F6F3EB;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:15.5px;line-height:1.6;font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+::selection{background:var(--amber);color:var(--inv-ink)}
+:focus-visible{outline:1px solid var(--amber);outline-offset:2px}
+button{font:inherit}
+
+/* ===================== FRAME ===================== */
+.frame{max-width:var(--col);margin:0 auto;border-left:var(--hair) solid var(--line);border-right:var(--hair) solid var(--line);min-height:100vh;background:var(--bg)}
+@media (max-width:900px){.frame{border-left:0;border-right:0}}
+
+/* --- terminal chrome bar --- */
+.chrome{
+  display:flex;align-items:center;gap:12px;
+  border-bottom:var(--hair) solid var(--line);
+  padding:9px var(--pad);font-family:var(--mono);font-size:11px;color:var(--dim);
+  position:sticky;top:0;background:var(--bg);z-index:20;
+}
+.dots{display:flex;gap:5px;flex:0 0 auto}
+.dots i{width:8px;height:8px;border:var(--hair) solid var(--line-2);display:block}
+.dots i:first-child{background:var(--alert);border-color:var(--alert)}
+.chrome .path{flex:1 1 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.chrome .path b{color:var(--mid);font-weight:400}
+.themebtn{
+  background:none;border:var(--hair) solid var(--line-2);color:var(--dim);
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 8px;cursor:pointer;flex:0 0 auto;
+}
+.themebtn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* --- masthead --- */
+.mast{padding:clamp(28px,6vw,46px) var(--pad) 0}
+.prompt{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 14px}
+.prompt .sig{color:var(--amber)}
+h1{
+  font-family:var(--disp);font-weight:700;
+  font-size:clamp(19px,3.6vw,29px);letter-spacing:-.05em;line-height:1.14;
+  margin:0 0 14px;text-transform:lowercase;
+}
+h1 .u{color:var(--amber)}
+.cursor{display:inline-block;width:.5em;height:1em;background:var(--amber);vertical-align:-.13em;animation:blink 1.05s steps(2,start) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* --- spec table (datasheet) --- */
+.spec{border-top:var(--hair) solid var(--line);margin-top:22px}
+.spec .r{display:grid;grid-template-columns:132px 1fr;border-bottom:var(--hair) solid var(--line)}
+.spec .k{
+  font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);
+  padding:9px 14px 9px 0;border-right:var(--hair) solid var(--line);
+}
+.spec .v{font-family:var(--mono);font-size:12px;color:var(--mid);padding:9px 0 9px 14px}
+.spec .v b{color:var(--ink);font-weight:500}
+.spec .v .live{color:var(--ok)}
+
+/* --- nav as commands --- */
+nav.cmds{
+  display:flex;flex-wrap:wrap;gap:0;border-bottom:var(--hair) solid var(--line);
+  margin-top:30px;position:sticky;top:37px;background:var(--bg);z-index:19;
+}
+nav.cmds button{
+  background:none;border:0;border-right:var(--hair) solid var(--line);cursor:pointer;
+  font-family:var(--mono);font-size:11px;color:var(--dim);
+  padding:11px 13px;letter-spacing:.02em;position:relative;
+}
+nav.cmds button:hover{color:var(--mid);background:var(--bg-2)}
+nav.cmds button.on{color:var(--amber);background:var(--bg-2)}
+nav.cmds button.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--amber)}
+nav.cmds button .d{color:var(--line-2)}
+nav.cmds button.on .d{color:var(--amber-dim)}
+
+/* ===================== PANELS ===================== */
+.panel{display:none;padding:0 var(--pad) 40px}
+.panel.on{display:block}
+.rule{
+  display:flex;align-items:center;gap:11px;margin:30px 0 20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--dim);
+}
+.rule::before{content:'';width:16px;height:var(--hair);background:var(--line-2);flex:0 0 16px}
+.rule::after{content:'';flex:1;height:var(--hair);background:var(--line)}
+.rule b{color:var(--amber);font-weight:400}
+
+.lead{font-family:var(--disp);font-weight:500;font-size:clamp(14px,1.9vw,17px);letter-spacing:-.035em;line-height:1.5;margin:0 0 14px;max-width:46ch;text-transform:lowercase}
+.lead .u{color:var(--amber)}
+.sub{color:var(--mid);font-size:15px;margin:0 0 24px;max-width:66ch}
+
+/* --- chat exchange --- */
+.chat{border:var(--hair) solid var(--line);margin:0 0 26px}
+.turn{padding:14px 16px;border-bottom:var(--hair) solid var(--line);display:grid;grid-template-columns:20px 1fr;gap:12px}
+.turn:last-child{border-bottom:0}
+.turn .who{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.5}
+.turn.u{background:var(--bg-2)}
+.turn.u .who{color:var(--amber)}
+.turn.u .msg{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.turn .msg{font-size:15px;color:var(--mid);line-height:1.6}
+.turn .msg strong{color:var(--ink);font-weight:400}
+.sugg{display:flex;flex-wrap:wrap;gap:0;border-top:var(--hair) solid var(--line)}
+.sugg button{
+  flex:1 1 auto;background:none;border:0;border-right:var(--hair) solid var(--line);
+  font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:left;
+  padding:10px 13px;cursor:pointer;
+}
+.sugg button:last-child{border-right:0}
+.sugg button:hover{color:var(--amber);background:var(--bg-2)}
+
+/* --- ASCII ladder --- */
+.meter{border:var(--hair) solid var(--line);margin:0 0 8px}
+.meter-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:var(--hair) solid var(--line);background:var(--bg-2);flex-wrap:wrap}
+.meter-h h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);margin:0;font-weight:400}
+.seg{display:flex;border:var(--hair) solid var(--line-2)}
+.seg button{background:none;border:0;border-right:var(--hair) solid var(--line-2);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--amber);color:var(--inv-ink)}
+.ladder{padding:14px;overflow-x:auto}
+.lrow{font-family:var(--mono);font-size:12px;white-space:pre;line-height:1.85;color:var(--mid);display:block}
+.lrow .lbl{color:var(--dim)}
+.lrow .bar{color:var(--amber)}
+.lrow .rest{color:var(--line-2)}
+.lrow .ms{color:var(--ink)}
+.lrow.sum{color:var(--ink);border-top:var(--hair) solid var(--line);display:block;margin-top:8px;padding-top:8px}
+.lrow.sum .bar{color:var(--ok)}
+.meter-f{padding:10px 14px;border-top:var(--hair) solid var(--line);font-family:var(--mono);font-size:10px;line-height:1.7;color:var(--dim)}
+
+/* --- datasheet cards --- */
+.cards{border-top:var(--hair) solid var(--line)}
+.item{border-bottom:var(--hair) solid var(--line);padding:20px 0;display:grid;grid-template-columns:132px 1fr;gap:0}
+.item .idx{
+  font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);
+  border-right:var(--hair) solid var(--line);padding-right:14px;line-height:1.9;
+}
+.item .idx b{display:block;color:var(--amber);font-weight:500;letter-spacing:.1em}
+.item .body{padding-left:14px;min-width:0}
+.item h3{font-family:var(--disp);font-weight:600;font-size:14.5px;letter-spacing:-.04em;line-height:1.35;margin:0 0 14px;text-transform:lowercase;max-width:34ch}
+.kv{display:grid;gap:9px}
+.kv>div{display:grid;grid-template-columns:66px 1fr;gap:12px}
+.kv dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding-top:3px}
+.kv dd{margin:0;font-size:14.5px;line-height:1.55;color:var(--mid)}
+.kv dd strong{color:var(--ink);font-weight:400}
+.kv dd b{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--amber)}
+
+/* --- artifact rows --- */
+a.item{text-decoration:none;transition:background .15s}
+a.item:hover{background:var(--bg-2)}
+a.item:hover h3{color:var(--amber)}
+.item .st{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-top:12px;display:block}
+.item.pending .idx b{color:var(--dim)}
+.item.pending .st{color:var(--amber-dim)}
+
+/* --- experience --- */
+.job{border-bottom:var(--hair) solid var(--line);padding:18px 0;display:grid;grid-template-columns:132px 1fr}
+.job:first-child{border-top:var(--hair) solid var(--line)}
+.job .meta{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-right:var(--hair) solid var(--line);padding-right:14px;line-height:1.8}
+.job .meta b{display:block;color:var(--amber);font-weight:500;margin-bottom:4px}
+.job .body{padding-left:14px;min-width:0}
+.job h3{font-family:var(--disp);font-weight:600;font-size:13px;letter-spacing:-.035em;margin:0 0 11px;text-transform:lowercase}
+.job h3 em{font-style:normal;color:var(--dim);font-weight:500}
+.job ul{margin:0;padding:0;list-style:none}
+.job li{position:relative;padding-left:15px;margin-bottom:8px;font-size:14.5px;line-height:1.55;color:var(--mid)}
+.job li::before{content:'—';position:absolute;left:0;color:var(--line-2);font-family:var(--mono);font-size:11px}
+.job li:last-child{margin-bottom:0}
+.job li b{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink)}
+
+/* --- stack --- */
+.kit{border-top:var(--hair) solid var(--line)}
+.kit .r{display:grid;grid-template-columns:132px 1fr;border-bottom:var(--hair) solid var(--line)}
+.kit .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amber);padding:13px 14px 13px 0;border-right:var(--hair) solid var(--line)}
+.kit .v{padding:13px 0 13px 14px;font-size:14.5px;color:var(--mid);line-height:1.6}
+
+/* --- offline --- */
+.hobs{border-top:var(--hair) solid var(--line)}
+.hob{display:grid;grid-template-columns:132px 1fr;border-bottom:var(--hair) solid var(--line)}
+.hob .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);padding:16px 14px 16px 0;border-right:var(--hair) solid var(--line)}
+.hob .k b{display:block;color:var(--amber);font-weight:500;margin-bottom:5px}
+.hob .v{padding:16px 0 16px 14px}
+.hob .v p{margin:0;font-size:14.5px;color:var(--mid);line-height:1.6}
+.hob .v .stat{display:block;margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.hob .v .stat b{color:var(--ink);font-weight:500}
+
+/* --- links / statusline --- */
+.links{display:flex;flex-wrap:wrap;gap:0;border:var(--hair) solid var(--line);margin-top:24px}
+.links a{
+  flex:1 1 auto;text-align:center;font-family:var(--mono);font-size:11px;text-decoration:none;
+  padding:12px 14px;color:var(--mid);border-right:var(--hair) solid var(--line);white-space:nowrap;
+}
+.links a:last-child{border-right:0}
+.links a:hover{background:var(--bg-2);color:var(--amber)}
+.links a.p{background:var(--amber);color:var(--inv-ink);font-weight:500}
+.links a.p:hover{background:var(--ink);color:var(--bg)}
+.status{
+  display:flex;flex-wrap:wrap;gap:0;border-top:var(--hair) solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  position:sticky;bottom:0;background:var(--bg);
+}
+.status span{padding:8px var(--pad);border-right:var(--hair) solid var(--line)}
+.status span:last-child{border-right:0;margin-left:auto}
+.status span.hl{background:var(--amber);color:var(--inv-ink);font-weight:500}
+.note{font-family:var(--mono);font-size:10.5px;line-height:1.75;color:var(--dim);margin:18px 0 0}
+.note a{color:var(--amber);text-decoration:none}
+a.ext{color:var(--amber);text-decoration:none;border-bottom:var(--hair) dotted var(--amber-dim)}
+a.ext:hover{border-bottom-style:solid;background:var(--bg-2)}
+a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
+
+@media (max-width:620px){
+  .spec .r,.item,.job,.kit .r,.hob{grid-template-columns:1fr}
+  .spec .k,.item .idx,.job .meta,.kit .k,.hob .k{border-right:0;border-bottom:var(--hair) solid var(--line);padding:8px 0}
+  .item .body,.job .body,.kit .v,.hob .v,.spec .v{padding-left:0;padding-top:11px}
+  .kv>div{grid-template-columns:1fr;gap:2px}
+  .kv dt{padding-top:0}
+  .sugg button{flex:1 1 100%;border-right:0;border-bottom:var(--hair) solid var(--line)}
+  .ladder{font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- ============ CHROME ============ -->
+  <div class="chrome">
+    <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    <span class="path">~/<b>janmeet-s-makkar</b>/portfolio — <span id="cwd">about</span></span>
+    <button class="themebtn" id="themebtn" type="button">theme: dark</button>
+  </div>
+
+  <!-- ============ MASTHEAD ============ -->
+  <div class="mast">
+    <p class="prompt"><span class="sig">➜</span> whoami</p>
+    <h1>janmeet singh makkar — ai pm building <span class="u">enterprise agent platforms</span> that survive production<span class="cursor" aria-hidden="true"></span></h1>
+
+    <div class="spec">
+      <div class="r"><div class="k">role</div><div class="v"><b>founding pm, ai</b> · <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">nugget</a> (eternal ltd.)</div></div>
+      <div class="r"><div class="k">owns</div><div class="v">adherence · latency · cost/interaction · eval coverage</div></div>
+      <div class="r"><div class="k">surface</div><div class="v">text agents · voice agents · orchestration · retrieval · fine-tuning</div></div>
+      <div class="r"><div class="k">education</div><div class="v">iit ropar — b.tech computer science</div></div>
+      <div class="r"><div class="k">location</div><div class="v">gurugram, in · ist utc+5:30</div></div>
+      <div class="r"><div class="k">status</div><div class="v"><span class="live">● open</span> — remote, worldwide</div></div>
+    </div>
+
+    <nav class="cmds" role="tablist" aria-label="sections">
+      <button role="tab" data-tab="about" class="on"><span class="d">01/</span> about</button>
+      <button role="tab" data-tab="systems"><span class="d">02/</span> systems</button>
+      <button role="tab" data-tab="artifacts"><span class="d">03/</span> artifacts</button>
+      <button role="tab" data-tab="experience"><span class="d">04/</span> experience</button>
+      <button role="tab" data-tab="stack"><span class="d">05/</span> stack</button>
+      <button role="tab" data-tab="offline"><span class="d">06/</span> offline</button>
+    </nav>
+  </div>
+
+  <!-- ============ 01 ABOUT ============ -->
+  <div class="panel on" id="p-about" role="tabpanel">
+    <div class="rule"><b>01</b> about</div>
+
+    <div class="chat">
+      <div class="turn u"><span class="who">➜</span><span class="msg">so what do you actually own?</span></div>
+      <div class="turn"><span class="who">◆</span><span class="msg">Four numbers that decide whether an agent is shippable: <strong>adherence, latency, cost per interaction, and eval coverage</strong>. Everything else on this site is downstream of those. I'm founding AI PM at <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">Nugget</a>, an enterprise agent platform — an AI operating system for enterprise support and operations — incubated inside Eternal, the group behind Zomato and Blinkit. Agent orchestration, retrieval and knowledge grounding, eval harnesses, model selection and fine-tuning of open-weight models, and the inference economics under all of it. Text and voice. Before this, four years of consumer-scale ranking and monetization work at Zomato and Blinkit — which is where I learned that latency is a product decision, not an engineering detail.</span></div>
+      <div class="sugg">
+        <button type="button" data-go="systems">➜ show me the systems</button>
+        <button type="button" data-go="artifacts">➜ what's public?</button>
+        <button type="button" data-go="experience">➜ track record</button>
+      </div>
+    </div>
+
+    <div class="rule"><b>fig. 1</b> turn budget</div>
+
+    <div class="meter">
+      <div class="meter-h">
+        <h3>every agent turn has to fit inside this</h3>
+        <div class="seg" role="group" aria-label="modality">
+          <button type="button" data-mode="text" class="on">text</button>
+          <button type="button" data-mode="voice">voice</button>
+        </div>
+      </div>
+      <div class="ladder" id="ladder" aria-live="polite"></div>
+      <div class="meter-f">illustrative budget, not a benchmark. every product decision on an agent gets paid for out of this line — and voice pays twice.</div>
+    </div>
+
+    <p class="note">technical enough to own architecture trade-offs with engineering. commercially fluent enough to defend them to whoever is paying for the tokens.</p>
+  </div>
+
+  <!-- ============ 02 SYSTEMS ============ -->
+  <div class="panel" id="p-systems" role="tabpanel">
+    <div class="rule"><b>02</b> systems · 5 entries</div>
+    <p class="lead">five problems, written <span class="u">decision-first</span>.</p>
+    <p class="sub">The decision is the part that transfers to a different domain. The metric only proves I stayed long enough to see it land.</p>
+
+    <div class="cards">
+      <article class="item">
+        <div class="idx"><b>sys-01</b>evals<br>built hands-on</div>
+        <div class="body">
+          <h3>an eval harness for agents that fail silently</h3>
+          <dl class="kv">
+            <div><dt>problem</dt><dd>An agent doesn't crash when it goes wrong. It skips a step, sounds fluent, and the task still looks complete. Conversation-level scores cannot see that.</dd></div>
+            <div><dt>decision</dt><dd><strong>Score at the node level, not the conversation level.</strong> A versioned test-case suite, adversarial prompts built to push the agent off-flow, and a rubric reporting which specific workflow nodes get skipped per batch — plus regression gating, so a prompt fix can't quietly break a solved case.</dd></div>
+            <div><dt>result</dt><dd>Failure frequency became a ranked fix list instead of a vibe. Regressions get caught before a tenant finds them.</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="idx"><b>sys-02</b>adherence<br>owned the design</div>
+        <div class="body">
+          <h3>raising instruction adherence without a bigger model</h3>
+          <dl class="kv">
+            <div><dt>problem</dt><dd>Enterprise agents fail on adherence long before they fail on intelligence. A policy prompt with twelve rules reliably loses rules four through nine somewhere mid-conversation.</dd></div>
+            <div><dt>decision</dt><dd><strong>Treat adherence as an architecture problem, not a prompting problem.</strong> Decompose monolithic prompts into explicit flow nodes with per-node context, constrain tool schemas so the model can't improvise a shape, put deterministic guardrails on the branches carrying real risk, and let node-level evals point at exactly which rule is being dropped.</dd></div>
+            <div><dt>result</dt><dd>Off-policy behaviour became a measurable, addressable list rather than a reason to escalate to a more expensive model.</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="idx"><b>sys-03</b>inference<br>economics</div>
+        <div class="body">
+          <h3>making cost per interaction the roadmap constraint</h3>
+          <dl class="kv">
+            <div><dt>problem</dt><dd>An agent's unit economics are set at the architecture layer. If revenue per inference doesn't clear cost per interaction at real concurrency, no downstream product work saves it.</dd></div>
+            <div><dt>decision</dt><dd><strong>Evaluate on the cost–latency curve at concurrency, not on single-call quality.</strong> Comparative simulations across model choice, vendor mix and pipeline configuration — routing cheap traffic to small models and reserving the frontier model for the turns that need it.</dd></div>
+            <div><dt>result</dt><dd>Cut per-minute production cost of the full stack to <b>a fraction of where it started</b>, which changed which customer segments were viable to serve at all.</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="idx"><b>sys-04</b>retrieval · kg<br>built hands-on</div>
+        <div class="body">
+          <h3>grounding that non-engineers can own</h3>
+          <dl class="kv">
+            <div><dt>problem</dt><dd>Off-policy answers are usually a knowledge problem, not a model problem. But every knowledge fix routed through engineering — so the people who actually knew the policy couldn't apply it.</dd></div>
+            <div><dt>decision</dt><dd><strong>Ship the knowledge layer as a product surface.</strong> Document ingestion, entity and relationship extraction into a knowledge graph, versioned KB updates, retrieval at answer time — behind an interface a tenant ops team can operate without a deploy.</dd></div>
+            <div><dt>result</dt><dd>Off-policy responses fell, and knowledge ownership moved to the teams closest to the policy.</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="idx"><b>sys-05</b>architecture<br>owned the eval</div>
+        <div class="body">
+          <h3>cascaded pipeline vs. native speech-to-speech</h3>
+          <dl class="kv">
+            <div><dt>problem</dt><dd>Speech-to-speech models collapse the latency ladder — and give up the observability and per-hop control that a cascaded VAD→STT→LLM→TTS pipeline gives you.</dd></div>
+            <div><dt>decision</dt><dd><strong>Price the trade instead of benchmarking it.</strong> What you lose in barge-in control, dialogue-state inspection and per-hop debuggability, set against what you gain in turn latency — segmented by agent class rather than decided globally.</dd></div>
+            <div><dt>result</dt><dd>Went into the platform roadmap as a per-class decision: which agents could move, and which couldn't yet.</dd></div>
+          </dl>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- ============ 03 ARTIFACTS ============ -->
+  <div class="panel" id="p-artifacts" role="tabpanel">
+    <div class="rule"><b>03</b> artifacts · public</div>
+    <p class="lead">things you can open and <span class="u">judge for yourself</span>.</p>
+    <p class="sub">Production work sits behind a login. These don't.</p>
+
+    <div class="cards">
+      <!-- REPLACE href + status on each entry as they ship. This tab is the whole point of the site. -->
+      <a class="item pending" href="#">
+        <div class="idx"><b>art-01</b>teardown</div>
+        <div class="body">
+          <h3>reading an agent trace: where multi-step agents break</h3>
+          <dl class="kv"><div><dt>abstract</dt><dd>A real failing trace walked span by span, and the four failure classes I check first.</dd></div></dl>
+          <span class="st">● in progress</span>
+        </div>
+      </a>
+      <a class="item pending" href="#">
+        <div class="idx"><b>art-02</b>build</div>
+        <div class="body">
+          <h3>one spec, two agent builders</h3>
+          <dl class="kv"><div><dt>abstract</dt><dd>The same app shipped on two agentic platforms, to isolate what the platform decides versus what the spec decides.</dd></div></dl>
+          <span class="st">● in progress</span>
+        </div>
+      </a>
+      <a class="item pending" href="#">
+        <div class="idx"><b>art-03</b>tool</div>
+        <div class="body">
+          <h3>agent trace triage</h3>
+          <dl class="kv"><div><dt>abstract</dt><dd>Clusters agent failures by workflow node, so the fix list writes itself.</dd></div></dl>
+          <span class="st">● in progress</span>
+        </div>
+      </a>
+      <a class="item pending" href="#">
+        <div class="idx"><b>art-04</b>writing</div>
+        <div class="body">
+          <h3>revenue per inference</h3>
+          <dl class="kv"><div><dt>abstract</dt><dd>Why I evaluate AI features on revenue per inference instead of engagement — and what that kills.</dd></div></dl>
+          <span class="st">● in progress</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ============ 04 EXPERIENCE ============ -->
+  <div class="panel" id="p-experience" role="tabpanel">
+    <div class="rule"><b>04</b> experience</div>
+    <p class="lead">agents now. before that, four years shipping <span class="u">consumer scale</span>.</p>
+    <p class="sub">Ranking, monetization and 0→1 category work — where the ML sat in the ranking layer and latency was still the constraint.</p>
+
+    <div>
+      <div class="job">
+        <div class="meta"><b>dec 2025 →</b><a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">nugget</a><br>eternal ltd.</div>
+        <div class="body">
+          <h3>founding product manager, ai</h3>
+          <ul>
+            <li>Own 0→1 product strategy for an enterprise AI agent platform: orchestration, prompt and context architecture, retrieval and knowledge layer, model selection, inference infrastructure, evals, analytics.</li>
+            <li>Run sprint planning and delivery across a 50-person engineering org on a problem-statement → solution-definition → measurable-outcome cadence.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="meta"><b>mar – dec 2025</b>zomato<br>eternal ltd.</div>
+        <div class="body">
+          <h3>product — consumer &amp; monetization</h3>
+          <ul>
+            <li>Shipped a GenAI agentic voice bot for rider onboarding and support — policy education, earnings clarity, issue resolution — cutting onboarding friction, support ticket volume and time-to-first-delivery.</li>
+            <li>Introduced "Near &amp; Fast" and ETA-driven ML ranking across homepage, search and listings, optimising jointly for distance, live ETA and rider density: <b>+4.5%</b> menu-to-cart.</li>
+            <li>Created a breakfast and coffee category from zero with Starbucks, Blue Tokai and Third Wave: <b>+42%</b> category orders, <b>+30%</b> morning-hour engagement.</li>
+            <li>Built automated in-app ad assets for merchant promotions; redesigned promo and bank-offer journeys homepage→cart for <b>+11%</b> CTR, <b>+18%</b> redemption.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="meta"><b>jul 2024 – mar 2025</b>blinkit<br>eternal ltd.</div>
+        <div class="body">
+          <h3>product analyst — b2b &amp; monetization</h3>
+          <ul>
+            <li>Led the 0→1 Google Performance Max integration with Blinkit Ads, automating ML-driven bidding: <b>−60%</b> advertiser activation time.</li>
+            <li>Launched self-serve advertiser onboarding, cutting turnaround from 7 days to under 24 hours and recovering <b>45%</b> of previously blocked revenue.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="meta"><b>jun – nov 2023</b>zomato<br>internship</div>
+        <div class="body">
+          <h3>product analyst</h3>
+          <ul>
+            <li>Built recommendation pipelines and chatbot features in Python on internal ML tooling; deployed a dynamic ETA prediction model for <b>+12pp</b> accuracy and 2.5 min lower ETAs.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="meta"><b>2020 – 2024</b>iit ropar</div>
+        <div class="body">
+          <h3>b.tech, computer science &amp; engineering</h3>
+          <ul>
+            <li>CGPA 8.48. General Secretary (elected); Head, Debate Society.</li>
+            <li>Inter-IIT Engineers Conclave 2022 (1st) · ShARE National Case Challenge, 848 teams (1st) · National Parliamentary Debate (winner) · Top 7% scholarship ×3.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 05 STACK ============ -->
+  <div class="panel" id="p-stack" role="tabpanel">
+    <div class="rule"><b>05</b> stack</div>
+    <p class="lead">what i can hold my own on with <span class="u">your engineers</span>.</p>
+    <p class="sub">Not a keyword list — these are the areas where I'd expect to be questioned and be fine.</p>
+
+    <div class="kit">
+      <div class="r"><div class="k">agent systems</div><div class="v">Agentic workflow and tool-calling design, prompt and context architecture, multi-step orchestration, dialogue and task state, guardrails, red-teaming.</div></div>
+      <div class="r"><div class="k">evals · adherence</div><div class="v">Eval harness design, node-level rubric scoring, adversarial suites, regression gating, failure-frequency analysis, promotion criteria for model changes.</div></div>
+      <div class="r"><div class="k">models · inference</div><div class="v">Model selection and routing, open-weight model evaluation, RAG and knowledge-graph grounding, cost-per-interaction and p95 latency work at concurrency.</div></div>
+      <div class="r"><div class="k">voice</div><div class="v">VAD, STT, TTS, native speech-to-speech, barge-in and turn-taking, concurrency and reliability at scale, observability.</div></div>
+      <div class="r"><div class="k">data · experiments</div><div class="v">SQL, Trino/Presto, Python (Pandas, NumPy), A/B testing and experiment design, Tableau, Power BI.</div></div>
+      <div class="r"><div class="k">build</div><div class="v">Figma, Cursor, Replit, Lovable — enough to ship the prototype myself instead of describing it.</div></div>
+    </div>
+  </div>
+
+  <!-- ============ 06 OFFLINE ============ -->
+  <div class="panel" id="p-offline" role="tabpanel">
+    <div class="rule"><b>06</b> offline</div>
+    <p class="lead">away from the keyboard, mostly <span class="u">outside and slightly out of breath</span>.</p>
+    <p class="sub">All five are long-horizon, feedback-loop pursuits where you cannot fake the preparation. That isn't a coincidence — it's the same reason I like evals.</p>
+
+    <div class="hobs">
+      <div class="hob">
+        <div class="k"><b>running</b>road · half</div>
+        <div class="v">
+          <p>Distance running, structured around a race calendar. Long slow weeks, one hard session, and a taper I always want to cut short.</p>
+          <span class="stat">half marathon pb — <b>1:57</b></span>
+        </div>
+      </div>
+      <div class="hob">
+        <div class="k"><b>hyrox</b>hybrid racing</div>
+        <div class="v">
+          <p>Eight one-kilometre runs interleaved with eight functional stations. Pacing is the entire sport — go too hard on the sled and the run you owe afterwards collects the debt with interest.</p>
+          <span class="stat">hyrox pb — <b>1:52</b></span>
+        </div>
+      </div>
+      <div class="hob">
+        <div class="k"><b>hiking</b>multi-day</div>
+        <div class="v">
+          <p>Multi-day trails when the leave gets approved, and whatever is reachable from Delhi on a weekend when it doesn't.</p>
+        </div>
+      </div>
+      <div class="hob">
+        <div class="k"><b>bouldering</b>indoor</div>
+        <div class="v">
+          <p>The appeal is that a problem you can't do is completely unambiguous about it. You either stick the move or you don't — no stakeholder alignment required.</p>
+        </div>
+      </div>
+      <div class="hob">
+        <div class="k"><b>music</b>always on</div>
+        <div class="v">
+          <p>A permanent background process. Deep in one genre for a few months, then abruptly somewhere else entirely.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">running is also why the race-prep coach in <a href="?tab=artifacts">artifacts</a> exists — the training plan i wanted didn't survive a missed week.</p>
+  </div>
+
+  <!-- ============ CONTACT ============ -->
+  <div style="padding:0 var(--pad) 34px">
+    <div class="rule"><b>07</b> contact</div>
+    <p class="lead">if you're putting agents in front of <span class="u">real users</span>, i'd like to hear about it.</p>
+    <p class="sub">Best fit: AI-native product teams shipping agents to production. Remote, or relocating.</p>
+    <div class="links">
+      <a class="p" href="mailto:hello@janmeet.pm">hello@janmeet.pm</a>
+      <a href="https://linkedin.com/in/janmeet-s-makkar" target="_blank" rel="noopener">linkedin ↗</a>
+      <!-- drop your pdf beside this file as resume.pdf -->
+      <a href="resume.pdf" target="_blank" rel="noopener">résumé.pdf ↗</a>
+    </div>
+  </div>
+
+  <div class="status">
+    <span class="hl">open to work</span>
+    <span>janmeet-s-makkar</span>
+    <span id="st-tab">01/06 about</span>
+    <span>ist utc+5:30</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+/* ---------------- theme ---------------- */
+var root=document.documentElement, btn=document.getElementById('themebtn');
+var STORE=true; // persists the light/dark choice via localStorage in production
+function apply(m){
+  root.setAttribute('data-theme',m);
+  btn.textContent='theme: '+m;
+  if(STORE){try{localStorage.setItem('theme',m);}catch(e){}}
+}
+var init='dark';
+if(STORE){try{var s=localStorage.getItem('theme');if(s)init=s;}catch(e){}}
+apply(init);
+btn.addEventListener('click',function(){
+  apply(root.getAttribute('data-theme')==='dark'?'light':'dark');
+});
+
+/* ---------------- tabs ---------------- */
+var tabs=[].slice.call(document.querySelectorAll('nav.cmds button'));
+var names={about:'01/06 about',systems:'02/06 systems',artifacts:'03/06 artifacts',
+           experience:'04/06 experience',stack:'05/06 stack',offline:'06/06 offline'};
+function show(name,push){
+  if(!names[name]) name='about';
+  tabs.forEach(function(b){
+    var on=b.dataset.tab===name;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+name);});
+  document.getElementById('cwd').textContent=name;
+  document.getElementById('st-tab').textContent=names[name];
+  if(push){try{history.replaceState(null,'','?tab='+name);}catch(e){}}
+  if(name==='about') render(mode);
+}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab,true);});});
+document.querySelectorAll('[data-go]').forEach(function(b){
+  b.addEventListener('click',function(){show(b.dataset.go,true);window.scrollTo({top:0,behavior:'smooth'});});
+});
+document.querySelectorAll('a[href^="?tab="]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    e.preventDefault();
+    show(a.getAttribute('href').replace('?tab=',''),true);
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ---------------- ASCII turn-budget meter ---------------- */
+var W=34; // bar cells
+var DATA={
+  text:{stages:[
+    {l:'retrieve',ms:90},{l:'reason',ms:420},{l:'tool call',ms:260},{l:'compose',ms:180}]},
+  voice:{stages:[
+    {l:'vad',ms:180},{l:'stt',ms:220},{l:'retrieve+reason',ms:510},{l:'tts',ms:140}]}
+};
+var mode='text', timer=null;
+var ladder=document.getElementById('ladder');
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function pad(s,n){s=String(s);while(s.length<n)s+=' ';return s;}
+function lpad(s,n){s=String(s);while(s.length<n)s=' '+s;return s;}
+function rep(c,n){var o='';for(var i=0;i<n;i++)o+=c;return o;}
+
+function render(m){
+  mode=m;
+  if(timer){clearInterval(timer);timer=null;}
+  var st=DATA[m].stages;
+  var sum=st.reduce(function(a,s){return a+s.ms;},0);
+  var plan=st.map(function(s){
+    return {l:s.l,ms:s.ms,n:Math.max(1,Math.round(s.ms/sum*W))};
+  });
+
+  ladder.innerHTML='';
+  var rows=plan.map(function(p){
+    var el=document.createElement('span');
+    el.className='lrow';
+    ladder.appendChild(el);
+    return el;
+  });
+  var sumEl=document.createElement('span');
+  sumEl.className='lrow sum';
+  ladder.appendChild(sumEl);
+
+  function paint(i,filled){
+    var p=plan[i];
+    rows[i].innerHTML='<span class="lbl">'+pad(p.l,16)+'</span>'+
+      '<span class="bar">'+rep('█',filled)+'</span>'+
+      '<span class="rest">'+rep('·',p.n-filled)+rep(' ',W-p.n)+'</span>'+
+      '  <span class="ms">'+lpad(p.ms+'ms',7)+'</span>';
+  }
+  function paintSum(done){
+    sumEl.innerHTML='<span class="lbl">'+pad('first token out',16)+'</span>'+
+      '<span class="bar">'+rep(done?'━':' ',done?W:0)+'</span>'+rep(' ',done?0:W)+
+      '  <span class="ms">'+lpad(sum+'ms',7)+'</span>';
+  }
+
+  if(reduce){
+    plan.forEach(function(p,i){paint(i,p.n);});
+    paintSum(true);
+    return;
+  }
+  plan.forEach(function(p,i){paint(i,0);});
+  paintSum(false);
+
+  var i=0,f=0;
+  timer=setInterval(function(){
+    if(i>=plan.length){clearInterval(timer);timer=null;paintSum(true);return;}
+    f++;
+    paint(i,f);
+    if(f>=plan[i].n){i++;f=0;}
+  },26);
+}
+
+document.querySelectorAll('.seg button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.seg button').forEach(function(x){x.classList.toggle('on',x===b);});
+    render(b.dataset.mode);
+  });
+});
+
+/* ---------------- boot ---------------- */
+var q=(location.search.match(/[?&]tab=([a-z]+)/)||[])[1]||'about';
+render('text');
+show(q,false);
+})();
+</script>
+</body>
+</html>
