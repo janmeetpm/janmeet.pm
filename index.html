@@ -42,6 +42,10 @@ html[data-theme="dark"]{
   --inv-ink:#141210;
   --glow:rgba(240,169,59,.30);
   --glow-strong:rgba(240,169,59,.55);
+  --sheen-1:rgba(255,255,255,.045);
+  --sheen-2:rgba(255,255,255,0);
+  --sheen-h1:rgba(240,169,59,.16);
+  --sheen-h2:rgba(240,169,59,.02);
 }
 html[data-theme="light"]{
   --bg:#EFEBE1;
@@ -57,8 +61,12 @@ html[data-theme="light"]{
   --alert:#B33A17;
   --ok:#5C7238;
   --inv-ink:#F6F3EB;
-  --glow:rgba(154,93,6,.22);
-  --glow-strong:rgba(154,93,6,.42);
+  --glow:rgba(154,93,6,.30);
+  --glow-strong:rgba(154,93,6,.52);
+  --sheen-1:rgba(0,0,0,.035);
+  --sheen-2:rgba(0,0,0,0);
+  --sheen-h1:rgba(154,93,6,.13);
+  --sheen-h2:rgba(154,93,6,.015);
 }
 
 *{box-sizing:border-box}
@@ -254,16 +262,60 @@ a.item:hover h3{color:var(--amber)}
 .hob .v .stat{display:block;margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
 .hob .v .stat b{color:var(--ink);font-weight:500}
 
-/* --- links / statusline --- */
-.links{display:flex;flex-wrap:wrap;gap:0;border:var(--hair) solid var(--line);margin-top:24px}
-.links a{
-  flex:1 1 auto;text-align:center;font-family:var(--mono);font-size:11px;text-decoration:none;
-  padding:12px 14px;color:var(--mid);border-right:var(--hair) solid var(--line);white-space:nowrap;
+/* --- interactive surfaces --- */
+/* Gradients and glow, per explicit owner request, against the "no
+   gradients / no glow" rule in CLAUDE.md. Scoped to things that are
+   actually clickable so the effect reads as affordance, not decoration.
+   Tokenised in both theme blocks; nothing hardcoded. */
+.links a,a.item,.sugg button,nav.cmds button,.seg button{
+  background-image:linear-gradient(180deg,var(--sheen-1),var(--sheen-2));
+  transition:box-shadow .15s,background-image .15s;
 }
-.links a:last-child{border-right:0}
-.links a:hover{background:var(--bg-2);color:var(--amber)}
-.links a.p{background:var(--amber);color:var(--inv-ink);font-weight:500}
-.links a.p:hover{background:var(--ink);color:var(--bg)}
+.links a:hover,a.item:hover,.sugg button:hover,nav.cmds button:hover,.seg button:hover,
+.links a:focus-visible,a.item:focus-visible,.sugg button:focus-visible,
+nav.cmds button:focus-visible,.seg button:focus-visible{
+  background-image:linear-gradient(180deg,var(--sheen-h1),var(--sheen-h2));
+  box-shadow:0 0 0 1px var(--glow),0 0 16px var(--glow-strong);
+}
+nav.cmds button.on,.seg button.on{box-shadow:0 0 14px var(--glow)}
+.hamb:hover,.hamb:focus-visible{
+  border-color:var(--amber);color:var(--amber);
+  box-shadow:0 0 0 1px var(--glow),0 0 12px var(--glow-strong);
+}
+
+/* --- links / statusline --- */
+/* Three equal filled cells read as a row of marketing buttons. These are
+   contact facts, so they use the same label/value row as every other
+   entry on the site; the email carries the one emphasis, in amber text. */
+/* Full measure, like every other entry row on the page. Capped at 34em the
+   table stopped mid-column while the section rule and the statusline above
+   and below it ran edge to edge, which read as a broken layout. */
+.links{border-top:var(--hair) solid var(--line);margin-top:24px}
+/* Baseline alignment, not equal padding: a 10px label and a 14px value
+   given the same padding-top sit ~2px apart, which reads as a mistake.
+   The column rule is drawn on the row so the cells can shift freely. */
+.links a{
+  display:grid;grid-template-columns:132px 1fr;align-items:baseline;position:relative;
+  text-decoration:none;border-bottom:var(--hair) solid var(--line);font-family:var(--mono);
+}
+.links a::before{
+  content:'';position:absolute;left:132px;top:0;bottom:0;
+  width:var(--hair);background:var(--line);
+}
+/* lowercase, like the nav and headings — caps at this size with wide
+   tracking fought the lowercase values beside them */
+.links .k{
+  font-size:11px;line-height:1.6;letter-spacing:.04em;color:var(--dim);
+  padding:11px 16px 11px 14px;
+}
+.links .v{
+  font-size:13.5px;line-height:1.5;letter-spacing:-.01em;color:var(--mid);
+  padding:11px 16px 11px 18px;
+}
+.links a.p .v{color:var(--amber);font-weight:500;font-size:14.5px}
+.links a[target] .v::after{content:'↗';font-size:.8em;margin-left:3px;opacity:.7}
+.links a:hover{background:var(--bg-2)}
+.links a:hover .v{color:var(--amber)}
 .status{
   display:flex;flex-wrap:wrap;gap:0;border-top:var(--hair) solid var(--line);
   font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
@@ -271,7 +323,11 @@ a.item:hover h3{color:var(--amber)}
 }
 .status span{padding:8px var(--pad);border-right:var(--hair) solid var(--line)}
 .status span:last-child{border-right:0;margin-left:auto}
-.status span.hl{background:var(--amber);color:var(--inv-ink);font-weight:500}
+/* was a solid amber slab, indistinguishable from the email action.
+   Sage is reserved for exactly this indicator; the dot matches the
+   "● open" treatment in the masthead spec table. */
+.status span.hl{color:var(--ok);font-weight:500}
+.status span.hl::before{content:'●';margin-right:6px;font-size:.9em}
 .note{font-family:var(--mono);font-size:10.5px;line-height:1.75;color:var(--dim);margin:18px 0 0}
 .note a{color:var(--amber);text-decoration:none}
 a.ext{color:var(--amber);text-decoration:none;border-bottom:var(--hair) dotted var(--amber-dim)}
@@ -324,9 +380,11 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   .meter-h{padding:9px 11px}
   .meter-f{padding:9px 11px}
 
-  /* full-width rows: three mono links in a row left ~9px per cell */
-  .links a{flex:1 1 100%;text-align:left;border-right:0;border-bottom:var(--hair) solid var(--line);padding:13px 14px}
-  .links a:last-child{border-bottom:0}
+  .links{max-width:none}
+  .links a{grid-template-columns:1fr;align-items:stretch;padding:12px 0}
+  .links a::before{display:none}
+  .links .k{padding:0 14px}
+  .links .v{padding:5px 14px 0}
 
   /* the timezone cell used to wrap onto a second line under the frame */
   .status{font-size:9px;letter-spacing:.06em}
@@ -644,9 +702,9 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
     <p class="lead">if you're putting agents in front of <span class="u">real users</span>, i'd like to hear about it.</p>
     <p class="sub">Best fit: AI-native product teams shipping agents to production. Remote, or relocating.</p>
     <div class="links">
-      <a class="p" href="mailto:hello@janmeet.pm">hello@janmeet.pm</a>
-      <a href="https://linkedin.com/in/janmeet-s-makkar" target="_blank" rel="noopener">linkedin ↗</a>
-      <a href="resume.pdf" target="_blank" rel="noopener">résumé.pdf ↗</a>
+      <a class="p" href="mailto:hello@janmeet.pm"><span class="k">email</span><span class="v">hello@janmeet.pm</span></a>
+      <a href="https://linkedin.com/in/janmeet-s-makkar" target="_blank" rel="noopener"><span class="k">linkedin</span><span class="v">/in/janmeet-s-makkar</span></a>
+      <a href="resume.pdf" target="_blank" rel="noopener"><span class="k">résumé</span><span class="v">resume.pdf</span></a>
     </div>
   </div>
 

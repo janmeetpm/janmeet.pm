@@ -24,11 +24,16 @@ Contact on site: hello@janmeet.pm (Cloudflare Email Routing → personal Gmail).
 ## Design system — do not drift from this
 
 The theme is deliberate: **terminal chrome + engineering datasheet**. It was chosen
-specifically to avoid the default AI-startup aesthetic. Hard rules:
+specifically to avoid the default AI-startup aesthetic.
 
-- **No gradients.** Zero. Earlier drafts had them; they were removed on purpose.
+**`DESIGN.md` is the full contract** — colour tokens, type scale, component states,
+emphasis/CTA policy. Read it before any visual change. The rules below are the summary.
+
 - **No border-radius.** Everything is hard-edged.
-- **No glow, no shadows, no blur.**
+- **No blur.**
+- Gradients and glow are permitted **only on interactive surfaces** (2026-08-18, owner
+  decision — they were banned outright before that). Never as decoration on static
+  content. Tokenised as `--sheen-*` and `--glow*` in both theme blocks. See `DESIGN.md`.
 - One accent colour only: amber (`--amber`). Sage green (`--ok`) is reserved
   exclusively for the "open to work" status indicator. Red (`--alert`) is unused
   decoration in the window chrome.
