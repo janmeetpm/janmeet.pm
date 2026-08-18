@@ -521,6 +521,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   }
   .pbody{overflow:hidden;min-height:0;visibility:visible}
   .panel.folded .pbody-w{grid-template-rows:0fr}
+  body.nofoldanim .pbody-w,body.nofoldanim .pbody{transition:none}
   .panel.folded .pbody{visibility:hidden;transition:visibility 0s linear .3s}
   .panel.folded{padding-bottom:0}
   /* the first thing inside a section shouldn't add a second gap under the rule */
@@ -923,6 +924,17 @@ function show(name,scroll){
   var el=document.getElementById('p-'+name);
   mark(name);
   setNav(false);
+  /* Going to a section opens it and folds the rest: a nav jump is a
+     destination, and leaving the previous section expanded behind you is how
+     the phone quietly grows back into one long scroll. Tapping a rule
+     directly is the additive gesture — that one leaves the others alone.
+     The animation is suppressed for the jump, because scrollIntoView has to
+     measure a layout that is finished, not one that is 30% through easing. */
+  if(folding()){
+    document.body.classList.add('nofoldanim');
+    order.forEach(function(n){fold(n,n===name);});
+    requestAnimationFrame(function(){document.body.classList.remove('nofoldanim');});
+  }
   if(scroll&&el) el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
 }
 tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab,true);});});
@@ -937,11 +949,104 @@ function spy(){
     if(el&&el.getBoundingClientRect().top<=line) name=order[i];
   }
   /* the end of the document belongs to the last section, not to whatever
-     happens to still be crossing the line */
-  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4) name=order[order.length-1];
+     happens to still be crossing the line — but only if that section is open.
+     Folded, the whole page can be shorter than the viewport, and this rule
+     would hand every scroll position to contact. */
+  var last=panels[order[order.length-1]];
+  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4
+     && !(last&&last.p.classList.contains('folded'))) name=order[order.length-1];
   mark(name);
+
+  var max=document.documentElement.scrollHeight-window.innerHeight;
+  root.style.setProperty('--prog',(max>2?Math.min(100,window.scrollY/max*100):0).toFixed(2)+'%');
 }
 window.addEventListener('scroll',function(){if(!spyRaf)spyRaf=requestAnimationFrame(spy);},{passive:true});
+
+/* ---------------- phone: sections fold ----------------
+   Seven stacked sections is a dozen screens of scroll on a phone, and the
+   shape of the site is only legible once you've scrolled all of it. Folded,
+   the page opens as a listing. Structure is built on every viewport so there
+   is exactly one DOM; the media query decides whether folds apply, and the
+   buttons are `disabled` above 620px so desktop keeps a plain rule.
+   No JS, no folds — every section stays open, as before. */
+var FOLD_Q=window.matchMedia('(max-width:620px)');
+var panels={}, openNames={};
+function folding(){return FOLD_Q.matches;}
+
+order.forEach(function(name){
+  var p=document.getElementById('p-'+name);
+  if(!p) return;
+  var head=p.querySelector('.rule');
+  if(!head) return;
+
+  /* everything after the section rule becomes the foldable body. A panel can
+     hold further .rule elements (fig. 1 in about) — those travel inside. */
+  var wrap=document.createElement('div'); wrap.className='pbody-w';
+  var body=document.createElement('div'); body.className='pbody'; body.id='b-'+name;
+  wrap.appendChild(body);
+  while(head.nextSibling) body.appendChild(head.nextSibling);
+  p.appendChild(wrap);
+
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className=head.className+' rule-t';
+  btn.innerHTML=head.innerHTML+'<i class="tw" aria-hidden="true">+</i>';
+  btn.setAttribute('aria-controls',body.id);
+  head.parentNode.replaceChild(btn,head);
+
+  panels[name]={p:p,btn:btn,tw:btn.querySelector('.tw')};
+  btn.addEventListener('click',function(){
+    if(!folding()) return; /* the button is also `disabled` above 620px */
+    var open=p.classList.contains('folded');
+    fold(name,open);
+    /* closing a section you are inside pulls the page up under you; put its
+       rule back under the bar so the scroll position stays meaningful */
+    if(!open){
+      var top=btn.getBoundingClientRect().top;
+      if(top<stickH) window.scrollTo(0,window.scrollY+top-stickH-8);
+    }
+    mark(name);
+    if(!spyRaf)spyRaf=requestAnimationFrame(spy);
+  });
+});
+
+function fold(name,open){
+  var e=panels[name];
+  if(!e) return;
+  openNames[name]=!!open;
+  e.p.classList.toggle('folded',!open);
+  e.btn.setAttribute('aria-expanded',open?'true':'false');
+  e.tw.textContent=open?'−':'+';
+  /* the ladder sizes itself to the width it can measure, which is zero while
+     about is folded. Re-fit once it is on screen. */
+  if(name==='about'&&open&&mode) requestAnimationFrame(function(){
+    var w=fitW();
+    if(w!==lastW){lastW=w;render(mode);}
+  });
+}
+
+/* entering / leaving the breakpoint: restore the remembered open set, or drop
+   the folded state entirely so desktop is never left with a hidden section */
+function syncFolds(){
+  var on=folding();
+  /* never animate a fold the reader didn't ask for — not on load, not when the
+     viewport crosses the breakpoint. It also keeps the folded state from
+     depending on a transition completing, which a backgrounded tab will
+     happily leave paused mid-ease. */
+  document.body.classList.add('nofoldanim');
+  requestAnimationFrame(function(){document.body.classList.remove('nofoldanim');});
+  order.forEach(function(name){
+    var e=panels[name];
+    if(!e) return;
+    e.btn.disabled=!on;
+    if(on){ fold(name,openNames[name]===undefined?name==='about':openNames[name]); }
+    else{
+      e.p.classList.remove('folded');
+      e.btn.removeAttribute('aria-expanded');
+      e.tw.textContent='−';
+    }
+  });
+}
 
 /* ---------------- mobile drawer ---------------- */
 var hamb=document.getElementById('hamb'), nav=document.getElementById('nav-cmds');
@@ -1071,6 +1176,12 @@ window.addEventListener('resize',function(){
   if(rzTimer)clearTimeout(rzTimer);
   rzTimer=setTimeout(function(){
     measureStick();
+    /* crossing 620px in either direction: restore the remembered open set, or
+       drop the folded state so desktop is never left with a hidden section.
+       This lives on resize rather than on a matchMedia change listener —
+       resize is the event that definitely fires, including for the phone
+       URL-bar collapse, and syncFolds() is idempotent. */
+    syncFolds();
     var w=fitW();
     if(w!==lastW){lastW=w;render(mode);}
   },160);
@@ -1081,6 +1192,9 @@ var q=(location.search.match(/[?&]tab=([a-z]+)/)||[])[1]||'about';
 measureStick();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measureStick);
 render('text');
+/* exactly one section open on arrival: the deep-linked one, else about */
+order.forEach(function(n){openNames[n]=(n===q);});
+syncFolds();
 mark(q);
 if(q!=='about'){
   var target=document.getElementById('p-'+q);
