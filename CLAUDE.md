@@ -34,6 +34,11 @@ emphasis/CTA policy. Read it before any visual change. The rules below are the s
 - Gradients and glow are permitted **only on interactive surfaces** (2026-08-18, owner
   decision — they were banned outright before that). Never as decoration on static
   content. Tokenised as `--sheen-*` and `--glow*` in both theme blocks. See `DESIGN.md`.
+- **The backdrop is the one exception** (also 2026-08-18, owner decision): the page sits
+  over a greyscale photograph, and three document-scale gradients make it readable —
+  `.bg`, `.wash`, `.frame::before`. The image is clamped to a 62–206 grey band because
+  text contrast depends on it; replace it only via `tools/prepare-backdrop.py` and
+  re-measure. `DESIGN.md` → Backdrop has the numbers.
 - One accent colour only: amber (`--amber`). Sage green (`--ok`) is reserved
   exclusively for the "open to work" status indicator. Red (`--alert`) is unused
   decoration in the window chrome.
@@ -51,10 +56,13 @@ outlines, keep the ASCII meter's `aria-live` region.
 
 ## Structure
 
-Six tabs plus a contact block, switched client-side with URL state (`?tab=systems`),
-so any tab can be deep-linked:
+**One page.** All seven sections are in the document at once and the nav scrolls to them;
+`?tab=systems` still deep-links, resolving to a scroll position, and the URL keeps itself in
+step as you scroll. The nav sits in `.topbar` together with the terminal chrome as a single
+sticky unit — do not re-split them, and do not hardcode the bar's height (JS measures it into
+`--stick` / `--chrome-h`).
 
-| tab | id | content |
+| section | id | content |
 |---|---|---|
 | 01 about | `p-about` | chat-framed intro + ASCII turn-budget meter |
 | 02 systems | `p-systems` | six problem/decision/result entries (SYS-01..06) |
@@ -62,6 +70,11 @@ so any tab can be deep-linked:
 | 04 experience | `p-experience` | Nugget, Zomato, Blinkit, internship, IIT Ropar |
 | 05 stack | `p-stack` | six capability rows |
 | 06 offline | `p-offline` | running, hyrox, hiking, bouldering, music |
+| 07 contact | `p-contact` | email, LinkedIn, résumé as label/value rows |
+
+`/legacy/index.html` is a frozen, `noindex` snapshot of the previous solid-background tabbed
+design (commit `2118f94`), kept as a one-file revert path: copy it over `index.html` and drop
+`bg-grey.jpg`. Do not maintain it or port fixes into it.
 
 ### The ASCII meter
 
@@ -96,7 +109,6 @@ thinking but every claim terminates at "trust me".
 
 ### 2. Assets not yet in the repo
 
-- `resume.pdf` — footer links to it, currently a 404
 - `favicon.ico`
 - `og.png` — 1200×630, referenced by the `og:image` tag. Without it, every LinkedIn
   and Slack share renders as a blank grey box.
@@ -106,6 +118,10 @@ thinking but every claim terminates at "trust me".
 Cloudflare Pages, connected to the GitHub repo `janmeetpm/janmeet.pm`. No build command,
 output directory `/`. Every push to `main` redeploys. `_headers` sets baseline security
 headers — it is Cloudflare Pages config, not a build step.
+
+Files served besides `index.html`: `bg-grey.jpg` (the backdrop), `resume.pdf`,
+`legacy/index.html`. `tools/` and `experiments/` are not part of the deploy — `experiments/`
+is gitignored entirely.
 
 ## Git identity
 

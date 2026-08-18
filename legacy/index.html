@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>janmeet-s-makkar — ai pm / enterprise agent platforms</title>
+<title>janmeet-s-makkar — ai pm / enterprise agent platforms [legacy]</title>
+<!-- LEGACY SNAPSHOT — the solid-background, tabbed design as it stood at commit
+     2118f94, before the photographic backdrop and the single-page scroll. Kept
+     verbatim so the old design can be reverted to at any time: copy this file
+     over ../index.html and delete bg-grey.jpg. Do not "improve" it — its only
+     job is to still be exactly this. noindex so it cannot compete with the
+     real site in search, and canonical points home. -->
+<meta name="robots" content="noindex,follow">
 <meta name="description" content="AI product manager building enterprise LLM agent platforms: orchestration, adherence, evals, retrieval grounding, open-model evaluation, and inference cost-latency economics.">
 <meta property="og:title" content="Janmeet Singh Makkar — AI PM, enterprise agent platforms">
 <meta property="og:description" content="Adherence, latency, cost per interaction, eval coverage. Founding AI PM at Nugget.">
@@ -32,7 +39,7 @@ html[data-theme="dark"]{
   --panel:#1B1918;
   --ink:#EDE7DC;
   --mid:#9A9287;
-  --dim:#837C71; /* two steps up: the backdrop shows through the pane, so micro-labels sit on a lifted, varying surface */
+  --dim:#6A635A;
   --line:#2E2A27;
   --line-2:#3D3833;
   --amber:#F0A93B;
@@ -46,15 +53,6 @@ html[data-theme="dark"]{
   --sheen-2:rgba(255,255,255,0);
   --sheen-h1:rgba(240,169,59,.16);
   --sheen-h2:rgba(240,169,59,.02);
-  /* backdrop: translucent surfaces over the photograph */
-  --img-a:.40;                    /* the photograph's own opacity */
-  --pane-top:rgba(17,16,16,.68);  /* reading pane at the masthead */
-  --pane-bot:rgba(17,16,16,.62);  /* ...and at the contact block: clearer, so the wash reads through the centre */
-  --bar-a:rgba(17,16,16,.90);     /* sticky chrome / nav / statusline */
-  --bg-2-a:rgba(24,22,21,.42);
-  --wash-top:rgba(255,255,255,.04);
-  --wash-bot:rgba(0,0,0,.60);
-  --grain:.055;
 }
 html[data-theme="light"]{
   --bg:#EFEBE1;
@@ -62,17 +60,10 @@ html[data-theme="light"]{
   --panel:#F6F3EB;
   --ink:#181510;
   --mid:#5A544A;
-  --dim:#6F685C; /* deepened — see the note on --amber below */
+  --dim:#8A8377;
   --line:#D2CCBD;
   --line-2:#BFB8A6;
-  /* This was #9A5D06 until the backdrop landed. Holding AA on small mono
-     labels while the reading pane itself darkens on scroll needs two steps
-     deeper: at #9A5D06 the pane can vary ~0 levels before amber breaks
-     4.5:1, at #8A5205 ~7 levels (invisible), at #7E4A04 ~18 levels and
-     amber still holds 4.5:1. The scroll-varying centre column is paid for
-     in accent saturation. Do not "restore" this without also flattening
-     --pane-top/--pane-bot. */
-  --amber:#7E4A04;
+  --amber:#9A5D06;
   --amber-dim:#C79B57;
   --alert:#B33A17;
   --ok:#5C7238;
@@ -83,61 +74,12 @@ html[data-theme="light"]{
   --sheen-2:rgba(0,0,0,0);
   --sheen-h1:rgba(154,93,6,.13);
   --sheen-h2:rgba(154,93,6,.015);
-  /* backdrop */
-  --img-a:.70;                     /* the photograph carries the margins; the pane holds the text */
-  --pane-top:rgba(239,235,225,.90);
-  --pane-bot:rgba(239,235,225,.80);
-  --bar-a:rgba(239,235,225,.92);
-  --bg-2-a:rgba(231,226,214,.55);
-  --wash-top:rgba(255,255,255,.12);
-  --wash-bot:rgba(0,0,0,.30);
-  --grain:.05;
-}
-
-/* ===================== BACKDROP =====================
-   Three layers under the chrome, the way a translucent terminal sits over a
-   desktop picture:
-
-   .bg              fixed, viewport-sized: the photograph, at --img-a.
-   .wash            absolute, the height of the whole document: black-to-clear,
-                    light at the masthead, dark by the contact block, so
-                    scrolling down dims the picture behind the text.
-   .frame::before   absolute, document height: the reading pane, which gets
-                    *clearer* toward the bottom so the darkening reads through
-                    the centre column and not only in the margins.
-
-   .bg is fixed, so the page scrolls past it — that parallax is what makes the
-   translucency read as depth rather than as a flat tint. It also means the
-   photograph's own top-to-bottom composition is a VIEWPORT effect: the horizon
-   sits at the same screen height at every scroll position. The scroll-driven
-   darkening is .wash's job, not the picture's.
-
-   bg-grey.jpg is greyscale (one accent colour on this site, and a colour cast
-   would be a second) and deliberately flattened into a 62–206 grey band, 53–219
-   after JPEG. That band is not cosmetic: the pane composites over whatever the
-   picture does, so a real black or a real white behind it would take text
-   contrast with it. Worst case measured over the band — light ink 11.2:1, mid
-   4.6:1, micro-labels 3.4:1, accent 4.5:1; dark 11.3 / 4.5 / 3.4 / 6.9:1.
-   Replace the image only through the same preparation, and re-check those.
-
-   These three gradients are decoration on static content, which the interactive
-   -surfaces-only rule below does not cover. Owner's call; see DESIGN.md. */
-.bg{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:url("bg-grey.jpg") center center / cover no-repeat;
-  opacity:var(--img-a);
-}
-.wash{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,var(--wash-top) 0%,var(--wash-bot) 100%)}
-/* grain, kept near-invisible: it only stops the ramp banding on wide screens */
-.wash::after{
-  content:'';position:absolute;inset:0;opacity:var(--grain);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0;background:var(--bg);color:var(--ink);position:relative;
+  margin:0;background:var(--bg);color:var(--ink);
   font-family:var(--sans);font-size:15.5px;line-height:1.6;font-weight:300;
   -webkit-font-smoothing:antialiased;
 }
@@ -147,25 +89,15 @@ a{color:inherit}
 button{font:inherit}
 
 /* ===================== FRAME ===================== */
-/* No flat fill: the frame's background is the pane ramp, which runs the same
-   direction as the wash (light .90 -> .80, dark .68 -> .62). The reading
-   surface therefore shifts 15-18 levels between the masthead and the contact
-   block instead of sitting still. */
-.frame{max-width:var(--col);margin:0 auto;border-left:var(--hair) solid var(--line);border-right:var(--hair) solid var(--line);min-height:100vh;background:none;position:relative;z-index:1}
-.frame::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,var(--pane-top) 0%,var(--pane-bot) 100%)}
+.frame{max-width:var(--col);margin:0 auto;border-left:var(--hair) solid var(--line);border-right:var(--hair) solid var(--line);min-height:100vh;background:var(--bg)}
 @media (max-width:900px){.frame{border-left:0;border-right:0}}
 
 /* --- terminal chrome bar --- */
-/* The chrome and the section nav are one sticky unit: a terminal's title bar
-   with its tab strip under it. Sticking them separately meant guessing the
-   chrome's height for the nav's `top`, and the guess (37px) was 8px short of
-   what Plex Mono actually renders (45px), so the nav slid under the chrome.
-   One container, one `top:0`, no arithmetic. */
-.topbar{position:sticky;top:0;z-index:20;background:var(--bar-a)}
 .chrome{
   display:flex;align-items:center;gap:12px;
   border-bottom:var(--hair) solid var(--line);
   padding:9px var(--pad);font-family:var(--mono);font-size:11px;color:var(--dim);
+  position:sticky;top:0;background:var(--bg);z-index:20;
 }
 .dots{display:flex;gap:5px;flex:0 0 auto}
 .dots i{width:8px;height:8px;border:var(--hair) solid var(--line-2);display:block}
@@ -191,7 +123,7 @@ button{font:inherit}
 }
 
 /* --- masthead --- */
-.mast{padding:clamp(28px,6vw,46px) var(--pad) 30px}
+.mast{padding:clamp(28px,6vw,46px) var(--pad) 0}
 .prompt{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 14px}
 .prompt .sig{color:var(--amber)}
 h1{
@@ -217,26 +149,22 @@ h1 .u{color:var(--amber)}
 /* --- nav as commands --- */
 nav.cmds{
   display:flex;flex-wrap:wrap;gap:0;border-bottom:var(--hair) solid var(--line);
+  margin-top:30px;position:sticky;top:37px;background:var(--bg);z-index:19;
 }
 nav.cmds button{
   background:none;border:0;border-right:var(--hair) solid var(--line);cursor:pointer;
   font-family:var(--mono);font-size:11px;color:var(--dim);
   padding:11px 13px;letter-spacing:.02em;position:relative;
 }
-nav.cmds button:hover{color:var(--mid);background:var(--bg-2-a)}
-nav.cmds button.on{color:var(--amber);background:var(--bg-2-a)}
+nav.cmds button:hover{color:var(--mid);background:var(--bg-2)}
+nav.cmds button.on{color:var(--amber);background:var(--bg-2)}
 nav.cmds button.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--amber)}
 nav.cmds button .d{color:var(--line-2)}
 nav.cmds button.on .d{color:var(--amber-dim)}
 
 /* ===================== PANELS ===================== */
-/* Every section is in the document at once; the nav scrolls to them.
-   scroll-margin has to clear both sticky bars, and their height depends on
-   which fonts have loaded and whether the nav is in the phone drawer — so JS
-   measures it into --stick on load and resize. The literal here is only the
-   no-JS fallback. */
-.panel{display:block;padding:0 var(--pad) 40px;scroll-margin-top:var(--stick,86px)}
-
+.panel{display:none;padding:0 var(--pad) 40px}
+.panel.on{display:block}
 .rule{
   display:flex;align-items:center;gap:11px;margin:30px 0 20px;
   font-family:var(--mono);font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--dim);
@@ -254,7 +182,7 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 .turn{padding:14px 16px;border-bottom:var(--hair) solid var(--line);display:grid;grid-template-columns:20px 1fr;gap:12px}
 .turn:last-child{border-bottom:0}
 .turn .who{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.5}
-.turn.u{background:var(--bg-2-a)}
+.turn.u{background:var(--bg-2)}
 .turn.u .who{color:var(--amber)}
 .turn.u .msg{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
 .turn .msg{font-size:15px;color:var(--mid);line-height:1.6}
@@ -270,7 +198,7 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 
 /* --- ASCII ladder --- */
 .meter{border:var(--hair) solid var(--line);margin:0 0 8px}
-.meter-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:var(--hair) solid var(--line);background:var(--bg-2-a);flex-wrap:wrap}
+.meter-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:var(--hair) solid var(--line);background:var(--bg-2);flex-wrap:wrap}
 .meter-h h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);margin:0;font-weight:400}
 .seg{display:flex;border:var(--hair) solid var(--line-2)}
 .seg button{background:none;border:0;border-right:var(--hair) solid var(--line-2);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;cursor:pointer}
@@ -398,7 +326,7 @@ nav.cmds button.on,.seg button.on{box-shadow:0 0 14px var(--glow)}
 .status{
   display:flex;flex-wrap:wrap;gap:0;border-top:var(--hair) solid var(--line);
   font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
-  position:sticky;bottom:0;background:var(--bar-a);
+  position:sticky;bottom:0;background:var(--bg);
 }
 .status span{padding:8px var(--pad);border-right:var(--hair) solid var(--line)}
 .status span:last-child{border-right:0;margin-left:auto}
@@ -442,13 +370,10 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
      hamburger they cost none, and each row gets a full-width tap target. */
   .hamb{display:inline-flex;align-items:center;justify-content:center}
   nav.cmds{
-    display:none;position:fixed;top:var(--chrome-h,45px);left:0;right:0;z-index:21;margin:0;
+    display:none;position:fixed;top:37px;left:0;right:0;z-index:21;margin:0;
     grid-template-columns:1fr;border-top:var(--hair) solid var(--line);
     border-bottom:var(--hair) solid var(--line-2);
-    max-height:calc(100vh - var(--chrome-h,45px));overflow-y:auto;
-    /* opaque, unlike the desktop bar: this one is an overlay menu on top of
-       the page, and at --bar-a the masthead read through the rows */
-    background:var(--bg);
+    max-height:calc(100vh - 37px);overflow-y:auto;
   }
   body.navopen nav.cmds{display:grid}
   nav.cmds button{
@@ -473,10 +398,6 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   .status span{padding:7px 10px}
   .status span.who{display:none}
 }
-@media (max-width:620px){
-  /* the nav collapses into the drawer, so only the chrome bar is sticky */
-  .panel{scroll-margin-top:var(--stick,46px)}
-}
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
@@ -484,28 +405,14 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 </style>
 </head>
 <body>
-<div class="bg" aria-hidden="true"></div>
-<div class="wash" aria-hidden="true"></div>
 <div class="frame">
 
-  <!-- ============ CHROME + NAV (one sticky unit) ============ -->
-  <div class="topbar">
+  <!-- ============ CHROME ============ -->
   <div class="chrome">
     <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
     <span class="path">~/<b>janmeet-s-makkar</b>/portfolio — <span id="cwd">about</span></span>
     <button class="themebtn" id="themebtn" type="button">theme: light</button>
     <button class="hamb" id="hamb" type="button" aria-label="sections menu" aria-expanded="false" aria-controls="nav-cmds">&#8801;</button>
-  </div>
-
-    <nav class="cmds" id="nav-cmds" aria-label="sections">
-      <button type="button" data-tab="about" class="on"><span class="d">01/</span> about</button>
-      <button type="button" data-tab="systems"><span class="d">02/</span> systems</button>
-      <button type="button" data-tab="artifacts"><span class="d">03/</span> artifacts</button>
-      <button type="button" data-tab="experience"><span class="d">04/</span> experience</button>
-      <button type="button" data-tab="stack"><span class="d">05/</span> stack</button>
-      <button type="button" data-tab="offline"><span class="d">06/</span> offline</button>
-      <button type="button" data-tab="contact"><span class="d">07/</span> contact</button>
-    </nav>
   </div>
 
   <!-- ============ MASTHEAD ============ -->
@@ -522,10 +429,18 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
       <div class="r"><div class="k">status</div><div class="v"><span class="live">● open</span> — remote, worldwide</div></div>
     </div>
 
+    <nav class="cmds" id="nav-cmds" role="tablist" aria-label="sections">
+      <button role="tab" data-tab="about" class="on"><span class="d">01/</span> about</button>
+      <button role="tab" data-tab="systems"><span class="d">02/</span> systems</button>
+      <button role="tab" data-tab="artifacts"><span class="d">03/</span> artifacts</button>
+      <button role="tab" data-tab="experience"><span class="d">04/</span> experience</button>
+      <button role="tab" data-tab="stack"><span class="d">05/</span> stack</button>
+      <button role="tab" data-tab="offline"><span class="d">06/</span> offline</button>
+    </nav>
   </div>
 
   <!-- ============ 01 ABOUT ============ -->
-  <div class="panel" id="p-about" tabindex="-1">
+  <div class="panel on" id="p-about" role="tabpanel">
     <div class="rule"><b>01</b> about</div>
 
     <div class="chat">
@@ -556,7 +471,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ 02 SYSTEMS ============ -->
-  <div class="panel" id="p-systems" tabindex="-1">
+  <div class="panel" id="p-systems" role="tabpanel">
     <div class="rule"><b>02</b> systems · 5 entries</div>
     <p class="lead">five problems, written <span class="u">decision-first</span>.</p>
     <p class="sub">The decision is the part that transfers to a different domain. The metric only proves I stayed long enough to see it land.</p>
@@ -625,7 +540,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ 03 ARTIFACTS ============ -->
-  <div class="panel" id="p-artifacts" tabindex="-1">
+  <div class="panel" id="p-artifacts" role="tabpanel">
     <div class="rule"><b>03</b> artifacts · public</div>
     <p class="lead">things you can open and <span class="u">judge for yourself</span>.</p>
     <p class="sub">Production work sits behind a login. These don't.</p>
@@ -668,7 +583,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ 04 EXPERIENCE ============ -->
-  <div class="panel" id="p-experience" tabindex="-1">
+  <div class="panel" id="p-experience" role="tabpanel">
     <div class="rule"><b>04</b> experience</div>
     <p class="lead">agents now. before that, four years shipping <span class="u">consumer scale</span>.</p>
     <p class="sub">Ranking, monetization and 0→1 category work — where the ML sat in the ranking layer and latency was still the constraint.</p>
@@ -729,7 +644,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ 05 STACK ============ -->
-  <div class="panel" id="p-stack" tabindex="-1">
+  <div class="panel" id="p-stack" role="tabpanel">
     <div class="rule"><b>05</b> stack</div>
     <p class="lead">what i can hold my own on with <span class="u">your engineers</span>.</p>
     <p class="sub">Not a keyword list — these are the areas where I'd expect to be questioned and be fine.</p>
@@ -745,7 +660,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ 06 OFFLINE ============ -->
-  <div class="panel" id="p-offline" tabindex="-1">
+  <div class="panel" id="p-offline" role="tabpanel">
     <div class="rule"><b>06</b> offline</div>
     <p class="lead">away from the keyboard, mostly <span class="u">outside and slightly out of breath</span>.</p>
     <p class="sub">All five are long-horizon, feedback-loop pursuits where you cannot fake the preparation. That isn't a coincidence — it's the same reason I like evals.</p>
@@ -789,14 +704,14 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <!-- ============ CONTACT ============ -->
-  <div class="panel" id="p-contact">
+  <div style="padding:0 var(--pad) 34px">
     <div class="rule"><b>07</b> contact</div>
     <p class="lead">if you're putting agents in front of <span class="u">real users</span>, i'd like to hear about it.</p>
     <p class="sub">Best fit: AI-native product teams shipping agents to production. Remote, or relocating.</p>
     <div class="links">
       <a class="p" href="mailto:hello@janmeet.pm"><span class="k">email</span><span class="v">hello@janmeet.pm</span></a>
       <a href="https://linkedin.com/in/janmeet-s-makkar" target="_blank" rel="noopener"><span class="k">linkedin</span><span class="v">/in/janmeet-s-makkar</span></a>
-      <a href="resume.pdf" target="_blank" rel="noopener"><span class="k">résumé</span><span class="v">resume.pdf</span></a>
+      <a href="/resume.pdf" target="_blank" rel="noopener"><span class="k">résumé</span><span class="v">resume.pdf</span></a>
     </div>
   </div>
 
@@ -826,64 +741,25 @@ btn.addEventListener('click',function(){
   apply(root.getAttribute('data-theme')==='dark'?'light':'dark');
 });
 
-/* ---------------- sections: one page, the nav scrolls ----------------
-   Every panel is in the document. Nav items scroll to their section; a
-   scroll listener owns the active item, the chrome path and the status
-   counter, so those stay honest whether you clicked or scrolled. ?tab=
-   deep links still work — they resolve to a scroll position. */
+/* ---------------- tabs ---------------- */
 var tabs=[].slice.call(document.querySelectorAll('nav.cmds button'));
-var names={about:'01/07 about',systems:'02/07 systems',artifacts:'03/07 artifacts',
-           experience:'04/07 experience',stack:'05/07 stack',offline:'06/07 offline',
-           contact:'07/07 contact'};
-var order=['about','systems','artifacts','experience','stack','offline','contact'];
-var current=null;
-
-/* Height of the pinned top bar. Measured, not hardcoded: it is 86px with
-   Plex Mono loaded and shorter without it, and on a phone the nav moves into
-   a fixed drawer so the bar is chrome-only. Feeds scroll-margin (via --stick)
-   and the scrollspy line, so a nav jump lands a section rule just below the
-   bar rather than behind it. --chrome-h positions the phone drawer. */
-var stickH=86;
-function measureStick(){
-  var bar=document.querySelector('.topbar'), chrome=document.querySelector('.chrome');
-  stickH=Math.round(bar?bar.offsetHeight:86);
-  document.documentElement.style.setProperty('--stick',stickH+'px');
-  if(chrome) document.documentElement.style.setProperty('--chrome-h',chrome.offsetHeight+'px');
-}
-
-function mark(name){
-  if(!names[name]||name===current) return;
-  current=name;
-  tabs.forEach(function(b){b.classList.toggle('on',b.dataset.tab===name);});
+var names={about:'01/06 about',systems:'02/06 systems',artifacts:'03/06 artifacts',
+           experience:'04/06 experience',stack:'05/06 stack',offline:'06/06 offline'};
+function show(name,push){
+  if(!names[name]) name='about';
+  tabs.forEach(function(b){
+    var on=b.dataset.tab===name;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+name);});
   document.getElementById('cwd').textContent=name;
   document.getElementById('st-tab').textContent=names[name];
-  try{history.replaceState(null,'','?tab='+name);}catch(e){}
-}
-
-function show(name,scroll){
-  if(!names[name]) name='about';
-  var el=document.getElementById('p-'+name);
-  mark(name);
+  if(push){try{history.replaceState(null,'','?tab='+name);}catch(e){}}
   setNav(false);
-  if(scroll&&el) el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  if(name==='about') render(mode);
 }
 tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab,true);});});
-
-/* active section = the last one whose top has passed under the sticky bars */
-var spyRaf=null;
-function spy(){
-  spyRaf=null;
-  var line=stickH+8, name=order[0];
-  for(var i=0;i<order.length;i++){
-    var el=document.getElementById('p-'+order[i]);
-    if(el&&el.getBoundingClientRect().top<=line) name=order[i];
-  }
-  /* the end of the document belongs to the last section, not to whatever
-     happens to still be crossing the line */
-  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4) name=order[order.length-1];
-  mark(name);
-}
-window.addEventListener('scroll',function(){if(!spyRaf)spyRaf=requestAnimationFrame(spy);},{passive:true});
 
 /* ---------------- mobile drawer ---------------- */
 var hamb=document.getElementById('hamb'), nav=document.getElementById('nav-cmds');
@@ -906,12 +782,13 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&navOpen()){setNav(false);hamb.focus();}
 });
 document.querySelectorAll('[data-go]').forEach(function(b){
-  b.addEventListener('click',function(){show(b.dataset.go,true);});
+  b.addEventListener('click',function(){show(b.dataset.go,true);window.scrollTo({top:0,behavior:'smooth'});});
 });
 document.querySelectorAll('a[href^="?tab="]').forEach(function(a){
   a.addEventListener('click',function(e){
     e.preventDefault();
     show(a.getAttribute('href').replace('?tab=',''),true);
+    window.scrollTo({top:0,behavior:'smooth'});
   });
 });
 
@@ -926,7 +803,6 @@ var DATA={
 };
 var mode='text', timer=null, lastW=0;
 var ladder=document.getElementById('ladder');
-var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* The row is LBL + W + 2 + MSW monospace cells wide. On a phone that
    overran the frame and pushed the ms column off-screen behind a
@@ -945,6 +821,7 @@ function fitW(){
   var cells=Math.floor((ladder.clientWidth-pad)/cw);
   return Math.max(12,Math.min(34,cells-LBL-2-MSW));
 }
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function pad(s,n){s=String(s);while(s.length<n)s+=' ';return s;}
 function lpad(s,n){s=String(s);while(s.length<n)s=' '+s;return s;}
@@ -1012,7 +889,6 @@ var rzTimer=null;
 window.addEventListener('resize',function(){
   if(rzTimer)clearTimeout(rzTimer);
   rzTimer=setTimeout(function(){
-    measureStick();
     var w=fitW();
     if(w!==lastW){lastW=w;render(mode);}
   },160);
@@ -1020,15 +896,8 @@ window.addEventListener('resize',function(){
 
 /* ---------------- boot ---------------- */
 var q=(location.search.match(/[?&]tab=([a-z]+)/)||[])[1]||'about';
-measureStick();
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measureStick);
 render('text');
-mark(q);
-if(q!=='about'){
-  var target=document.getElementById('p-'+q);
-  if(target) requestAnimationFrame(function(){target.scrollIntoView({behavior:'auto',block:'start'});});
-}
-spy();
+show(q,false);
 })();
 </script>
 </body>

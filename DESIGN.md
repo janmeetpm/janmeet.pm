@@ -34,6 +34,12 @@ Earlier drafts of this site banned gradients, shadows and glow outright. That ru
 - Both effects are tokenised (`--sheen-*`, `--glow*`) in both theme blocks.
 - Blur and border-radius are still banned, so a "soft card" look remains impossible.
 
+**One further exception, also the owner's call (2026-08-18): the backdrop.** The page now
+sits over a photograph, and three document-scale gradients are what make that readable —
+see [Backdrop](#backdrop). They are the page's ground, not decoration applied to a
+component, and they are the only gradients allowed to touch static content. A gradient on
+a card, a heading or a panel is still wrong.
+
 ## Colour tokens
 
 Same token names in both themes. Light is the default (`<html data-theme="light">`); the
@@ -49,7 +55,7 @@ choice persists in `localStorage` (`STORE = true`).
 | `--dim` | labels, captions | `#6A635A` | `#8A8377` |
 | `--line` | hairline rules | `#2E2A27` | `#D2CCBD` |
 | `--line-2` | stronger edges, borders | `#3D3833` | `#BFB8A6` |
-| `--amber` | the one accent | `#F0A93B` | `#9A5D06` |
+| `--amber` | the one accent | `#F0A93B` | `#7E4A04` |
 | `--amber-dim` | muted accent | `#8A6425` | `#C79B57` |
 | `--alert` | chrome dot only | `#E4633C` | `#B33A17` |
 | `--ok` | **open-to-work status only** | `#8FA76B` | `#5C7238` |
@@ -59,9 +65,30 @@ choice persists in `localStorage` (`STORE = true`).
 | `--sheen-1` / `--sheen-2` | resting gradient stops | `rgba(255,255,255,.045)` → transparent | `rgba(0,0,0,.035)` → transparent |
 | `--sheen-h1` / `--sheen-h2` | hover gradient stops | `rgba(240,169,59,.16)` → `.02` | `rgba(154,93,6,.13)` → `.015` |
 
+**Light `--amber` was `#9A5D06` until the backdrop landed.** It is now `#7E4A04`, two steps
+deeper. The reading pane darkens as you scroll, and a mid-tone accent on a darkening
+surface loses contrast: at `#9A5D06` the pane can vary ~0 levels before amber breaks
+4.5:1 on small mono labels; at `#8A5205`, ~7 levels, which is invisible; at `#7E4A04`,
+~18 levels with amber still at 4.5:1. `--dim` moved two steps in both themes for the same
+reason. Restoring either without flattening `--pane-top`/`--pane-bot` first puts the site
+under AA.
+
 Light-theme glow carries a **higher alpha than dark** (.30/.52 vs .30/.55 is deliberate, and
 light was raised from .22/.42). The same alpha over a pale background reads much weaker than
 over near-black; matching the numbers makes light look broken.
+
+### Backdrop tokens
+
+| token | role | dark | light |
+|---|---|---|---|
+| `--img-a` | the photograph's opacity | `.40` | `.70` |
+| `--pane-top` | reading pane at the masthead | `rgba(17,16,16,.68)` | `rgba(239,235,225,.90)` |
+| `--pane-bot` | reading pane at the contact block | `rgba(17,16,16,.62)` | `rgba(239,235,225,.80)` |
+| `--bar-a` | sticky top bar / statusline | `rgba(17,16,16,.90)` | `rgba(239,235,225,.92)` |
+| `--bg-2-a` | translucent `--bg-2`, for fills over the backdrop | `rgba(24,22,21,.42)` | `rgba(231,226,214,.55)` |
+| `--wash-top` / `--wash-bot` | the scroll wash's ends | `rgba(255,255,255,.04)` → `rgba(0,0,0,.60)` | `rgba(255,255,255,.12)` → `rgba(0,0,0,.30)` |
+| `--grain` | grain layer opacity | `.055` | `.05` |
+| `--stick` / `--chrome-h` | set by JS: top bar height, chrome height | measured | measured |
 
 ### Layout tokens
 
@@ -155,6 +182,64 @@ one block and the page doesn't become a dense ladder of lines.
 
 Short content should not span the full measure: the contact block is capped at `34em` so
 three short facts don't render as three wide, mostly-empty boxes.
+
+## Backdrop
+
+Three layers under the chrome, the way a translucent terminal sits over a desktop picture:
+
+| layer | position | role |
+|---|---|---|
+| `.bg` | `fixed`, viewport | the photograph, `bg-grey.jpg`, at `--img-a` |
+| `.wash` | `absolute`, document height | black-to-clear: light at the masthead, dark at the contact block |
+| `.frame::before` | `absolute`, document height | the reading pane, `--pane-top` → `--pane-bot` |
+
+`.bg` is **fixed**, so the page scrolls past it. That parallax is what makes translucency
+read as depth rather than as a flat tint — and it means the photograph's own composition is
+a *viewport* effect: its horizon sits at the same screen height at every scroll position.
+The scroll-driven darkening is `.wash`'s job, not the picture's.
+
+**The pane ramp runs the same direction as the wash** — the pane gets *clearer* toward the
+bottom, so the darkening reads through the centre column and not only in the margins either
+side of the 860px frame. The reading surface shifts 15–18 levels between the masthead and
+the contact block; the margins shift 60–99. Reverse the ramp and the centre column goes
+static; flatten it and the accent can go back to `#9A5D06`. Those are the same decision.
+
+**The image is constrained, not decorative.** `bg-grey.jpg` is greyscale — one accent colour
+on this site, and a colour cast would be a second — and flattened into a **62–206 grey band**
+(53–219 after JPEG). The pane composites over whatever the picture does, so a real black or a
+real white behind it takes text contrast with it. Worst case over the band, measured:
+
+| | ink | body | micro-labels | accent |
+|---|---|---|---|---|
+| light | 11.2:1 | 4.6:1 | 3.4:1 | 4.5:1 |
+| dark | 11.3:1 | 4.5:1 | 3.4:1 | 6.9:1 |
+
+Replace the image only through `tools/prepare-backdrop.py`, which enforces greyscale, the
+band, the resize and EXIF stripping — then re-measure. Dropping a camera-original JPEG in
+place will look fine at the masthead and fail at the bottom of the page.
+
+## Structure: one page, seven sections
+
+The six section panels and the contact block are **all in the document at once**, stacked, in
+`?tab=` order. There are no tabs any more:
+
+- The nav lives in `.topbar` **with the chrome**, one sticky unit, one `top:0`. They used to
+  stick separately, which meant guessing the chrome's height for the nav's `top` — the guess
+  (37px) was 8px short of what Plex Mono actually renders (45px) and the nav slid underneath.
+  Do not re-split them.
+- Nav items scroll to their section. A `rAF`-throttled scroll listener owns the active item,
+  the chrome path and the statusline counter, so those are right whether you clicked or
+  scrolled.
+- `?tab=systems` still deep-links; it resolves to a scroll position, and `replaceState` keeps
+  the URL in step as you scroll. Existing links keep working.
+- `--stick` (top bar height) and `--chrome-h` are **measured by JS** on load, on
+  `document.fonts.ready` and on resize, then used for `scroll-margin-top` and the scrollspy
+  line. Hardcoding them back means section rules land behind the bar.
+- Contact is the seventh nav item and a `.panel` like the rest (`#p-contact`).
+
+`/legacy/index.html` is a verbatim snapshot of the previous solid-background, tabbed design
+(commit `2118f94`), `noindex`, kept so the old design can be reverted to at any time. It is a
+frozen artefact — do not maintain it, do not port fixes into it.
 
 ## Interactive surfaces
 
