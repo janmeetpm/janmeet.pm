@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,6 +40,8 @@ html[data-theme="dark"]{
   --alert:#E4633C;
   --ok:#8FA76B;
   --inv-ink:#141210;
+  --glow:rgba(240,169,59,.30);
+  --glow-strong:rgba(240,169,59,.55);
 }
 html[data-theme="light"]{
   --bg:#EFEBE1;
@@ -55,6 +57,8 @@ html[data-theme="light"]{
   --alert:#B33A17;
   --ok:#5C7238;
   --inv-ink:#F6F3EB;
+  --glow:rgba(154,93,6,.22);
+  --glow-strong:rgba(154,93,6,.42);
 }
 
 *{box-sizing:border-box}
@@ -89,8 +93,12 @@ button{font:inherit}
   background:none;border:var(--hair) solid var(--line-2);color:var(--dim);
   font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:4px 8px;cursor:pointer;flex:0 0 auto;
+  box-shadow:0 0 8px var(--glow);
 }
-.themebtn:hover{border-color:var(--amber);color:var(--amber)}
+.themebtn:hover,.themebtn:focus-visible{
+  border-color:var(--amber);color:var(--amber);
+  box-shadow:0 0 0 1px var(--glow), 0 0 12px var(--glow-strong);
+}
 
 /* --- masthead --- */
 .mast{padding:clamp(28px,6vw,46px) var(--pad) 0}
@@ -285,7 +293,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   <div class="chrome">
     <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
     <span class="path">~/<b>janmeet-s-makkar</b>/portfolio — <span id="cwd">about</span></span>
-    <button class="themebtn" id="themebtn" type="button">theme: dark</button>
+    <button class="themebtn" id="themebtn" type="button">theme: light</button>
   </div>
 
   <!-- ============ MASTHEAD ============ -->
@@ -607,7 +615,7 @@ function apply(m){
   btn.textContent='theme: '+m;
   if(STORE){try{localStorage.setItem('theme',m);}catch(e){}}
 }
-var init='dark';
+var init='light';
 if(STORE){try{var s=localStorage.getItem('theme');if(s)init=s;}catch(e){}}
 apply(init);
 btn.addEventListener('click',function(){
