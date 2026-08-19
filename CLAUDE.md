@@ -162,3 +162,7 @@ git log -1 --format='%an <%ae>'
   role as one of three things worth an email, not as the ask. Keep the door open, keep the
   tone level.
 - Keep it one file. If a change seems to need a build step, say so and stop.
+- **Log every change in `CHANGELOG.md`.** Reverse-chronological, `YYYY-MM-DD HH:MM IST`.
+  Record the *reason*, not just what moved — the commit log already has the diff. Add the
+  entry under **Unreleased** while the work is in the working tree; move it under a dated
+  heading when it lands on `main`. It is a repo doc, not a deploy asset.
