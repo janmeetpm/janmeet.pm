@@ -155,12 +155,23 @@ git log -1 --format='%an <%ae>'
 
 - Verb precision in all copy: "Built" is reserved for work done hands-on; "Led",
   "Designed", "Owned", "Shipped" are distinct and deliberate. Do not upgrade a verb.
+- **Reading level is layered** (owner call, 2026-08-20). Everything above `02 systems` — the
+  h1, the `.spec` rows, the about turns, the meter, and the `<title>`/`meta`/`og` strings — is
+  written for a reader with no deep AI background: a recruiter or a non-AI founder. No
+  *adherence*, *orchestration*, *eval coverage*, *inference economics* or *latency* on page
+  one; the four numbers appear there as four plain questions. From `02 systems` down, the
+  technical vocabulary is correct and expected. Page one sells, the rest proves — do not
+  "restore" the jargon upward, and do not strip the terminology below.
 - Never invent a metric, race time, grade, or date. Placeholder over plausible guess.
 - **Availability is framed as curiosity, not as a job hunt** (owner call, 2026-08-18).
-  The site says what is being built and pulled apart right now; it does not say "open to
-  work", "available for hire", or "seeking opportunities". The contact section mentions a
-  role as one of three things worth an email, not as the ask. Keep the door open, keep the
-  tone level.
+  No "open to work", "available for hire", or "seeking opportunities" anywhere. Keep the door
+  open, keep the tone level.
+  **Refined 2026-08-19:** the point of the site is still to produce an email, so the contact
+  section must carry a *promise* — what the reader gets for writing — not a list of what the
+  owner enjoys receiving. Full-time ownership is named there as a possible outcome, but
+  conditional and reader-initiated ("if what you're building needs…"). Do not revert that to
+  the older "one of three things worth an email" phrasing as though it were drift, and do not
+  push it the other way into an ask.
 - Keep it one file. If a change seems to need a build step, say so and stop.
 - **Log every change in `CHANGELOG.md`.** Reverse-chronological, `YYYY-MM-DD HH:MM IST`.
   Record the *reason*, not just what moved — the commit log already has the diff. Add the

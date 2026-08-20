@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>janmeet-s-makkar — ai pm / enterprise agent platforms</title>
-<meta name="description" content="AI product manager building enterprise LLM agent platforms: orchestration, adherence, evals, retrieval grounding, open-model evaluation, and inference cost-latency economics.">
+<title>janmeet singh makkar — ai pm who makes ai assistants reliable enough to ship</title>
+<meta name="description" content="Founding AI product manager at Nugget. I own the parts of a conversational AI agent that decide whether it works: whether it follows the rules, how fast it answers, what a conversation costs, and how well it has been tested.">
 <meta property="og:title" content="Janmeet Singh Makkar — AI PM, enterprise agent platforms">
-<meta property="og:description" content="Adherence, latency, cost per interaction, eval coverage. Founding AI PM at Nugget.">
+<meta property="og:description" content="The four questions that decide whether an AI assistant is ready for real customers: does it follow the rules, is it fast, what does a conversation cost, how well is it tested. Founding PM, AI at Nugget.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://janmeet.pm">
 <meta property="og:image" content="https://janmeet.pm/og.png">
@@ -28,6 +28,12 @@
   --col:860px;
   --pad:clamp(16px,4vw,26px);
   --hair:1px;
+  /* the built-in CSS easings are too weak to read at these durations */
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-drawer:cubic-bezier(.32,.72,0,1);
+  /* every pressable surface shares one press transform, so a tap on the nav,
+     the fold rule and the contact rows all feel like the same gesture */
+  --press:scale(.985);
 }
 html[data-theme="dark"]{
   --bg:#111010;
@@ -180,15 +186,23 @@ button{font:inherit}
   font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:4px 8px;cursor:pointer;flex:0 0 auto;
   box-shadow:0 0 8px var(--glow);
+  transition:border-color .15s,color .15s,box-shadow .15s,transform .12s var(--ease-out);
 }
 .hamb{
   display:none;
   background:none;border:var(--hair) solid var(--line-2);color:var(--mid);
   font-family:var(--mono);font-size:15px;line-height:1;
   padding:5px 9px;cursor:pointer;flex:0 0 auto;
+  transition:border-color .15s,color .15s,box-shadow .15s,transform .12s var(--ease-out);
 }
 .hamb[aria-expanded="true"]{border-color:var(--amber);color:var(--amber)}
-.themebtn:hover,.themebtn:focus-visible{
+@media (hover:hover) and (pointer:fine){
+  .themebtn:hover{
+    border-color:var(--amber);color:var(--amber);
+    box-shadow:0 0 0 1px var(--glow), 0 0 12px var(--glow-strong);
+  }
+}
+.themebtn:focus-visible{
   border-color:var(--amber);color:var(--amber);
   box-shadow:0 0 0 1px var(--glow), 0 0 12px var(--glow-strong);
 }
@@ -226,7 +240,9 @@ nav.cmds button{
   font-family:var(--mono);font-size:11px;color:var(--dim);
   padding:11px 13px;letter-spacing:.02em;position:relative;
 }
-nav.cmds button:hover{color:var(--mid);background:var(--bg-2-a)}
+@media (hover:hover) and (pointer:fine){
+  nav.cmds button:hover{color:var(--mid);background:var(--bg-2-a)}
+}
 nav.cmds button.on{color:var(--amber);background:var(--bg-2-a)}
 nav.cmds button.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--amber)}
 nav.cmds button .d{color:var(--line-2)}
@@ -252,6 +268,7 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 .rule-t{
   -webkit-appearance:none;appearance:none;background:none;border:0;
   width:100%;padding:0;text-align:left;color:var(--dim);cursor:default;
+  transition:transform .12s var(--ease-out);
 }
 .rule-t .tw{display:none}
 .rule b{color:var(--amber);font-weight:400}
@@ -277,7 +294,9 @@ nav.cmds button.on .d{color:var(--amber-dim)}
   padding:10px 13px;cursor:pointer;
 }
 .sugg button:last-child{border-right:0}
-.sugg button:hover{color:var(--amber);background:var(--bg-2)}
+@media (hover:hover) and (pointer:fine){
+  .sugg button:hover{color:var(--amber);background:var(--bg-2)}
+}
 
 /* --- ASCII ladder --- */
 .meter{border:var(--hair) solid var(--line);margin:0 0 8px}
@@ -306,7 +325,7 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 }
 .item .idx b{display:block;color:var(--amber);font-weight:500;letter-spacing:.1em}
 .item .body{padding-left:14px;min-width:0}
-.item h3{font-family:var(--disp);font-weight:600;font-size:14.5px;letter-spacing:-.04em;line-height:1.35;margin:0 0 14px;text-transform:lowercase;max-width:34ch}
+.item h3{font-family:var(--disp);font-weight:600;font-size:14.5px;letter-spacing:-.04em;line-height:1.35;margin:0 0 14px;text-transform:lowercase;max-width:34ch;transition:color .15s}
 .kv{display:grid;gap:9px}
 .kv>div{display:grid;grid-template-columns:66px 1fr;gap:12px}
 .kv dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding-top:3px}
@@ -316,8 +335,10 @@ nav.cmds button.on .d{color:var(--amber-dim)}
 
 /* --- artifact rows --- */
 a.item{text-decoration:none;transition:background .15s}
-a.item:hover{background:var(--bg-2)}
-a.item:hover h3{color:var(--amber)}
+@media (hover:hover) and (pointer:fine){
+  a.item:hover{background:var(--bg-2)}
+  a.item:hover h3{color:var(--amber)}
+}
 .item .st{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-top:12px;display:block}
 .item.pending .idx b{color:var(--dim)}
 .item.pending .st{color:var(--amber-dim)}
@@ -359,16 +380,36 @@ a.item:hover h3{color:var(--amber)}
    Tokenised in both theme blocks; nothing hardcoded. */
 .links a,a.item,.sugg button,nav.cmds button,.seg button{
   background-image:linear-gradient(180deg,var(--sheen-1),var(--sheen-2));
-  transition:box-shadow .15s,background-image .15s;
+  transition:box-shadow .15s,background-image .15s,transform .12s var(--ease-out);
 }
-.links a:hover,a.item:hover,.sugg button:hover,nav.cmds button:hover,.seg button:hover,
+/* the sheen lift is a hover affordance, so it must not survive a tap: touch
+   fires :hover on press and leaves it on the last-tapped row, which reads as
+   a second active state fighting .on */
+@media (hover:hover) and (pointer:fine){
+  .links a:hover,a.item:hover,.sugg button:hover,nav.cmds button:hover,.seg button:hover{
+    background-image:linear-gradient(180deg,var(--sheen-h1),var(--sheen-h2));
+    box-shadow:0 0 0 1px var(--glow),0 0 16px var(--glow-strong);
+  }
+}
 .links a:focus-visible,a.item:focus-visible,.sugg button:focus-visible,
 nav.cmds button:focus-visible,.seg button:focus-visible{
   background-image:linear-gradient(180deg,var(--sheen-h1),var(--sheen-h2));
   box-shadow:0 0 0 1px var(--glow),0 0 16px var(--glow-strong);
 }
 nav.cmds button.on,.seg button.on{box-shadow:0 0 14px var(--glow)}
-.hamb:hover,.hamb:focus-visible{
+/* press feedback. Subtle by design — a hard-edged mono surface that squashes
+   reads as a toy; .985 is enough to confirm the tap landed. */
+.links a:active,a.item:active,.sugg button:active,nav.cmds button:active,
+.seg button:active,.themebtn:active,.hamb:active,.rule-t:not(:disabled):active{
+  transform:var(--press);
+}
+@media (hover:hover) and (pointer:fine){
+  .hamb:hover{
+    border-color:var(--amber);color:var(--amber);
+    box-shadow:0 0 0 1px var(--glow),0 0 12px var(--glow-strong);
+  }
+}
+.hamb:focus-visible{
   border-color:var(--amber);color:var(--amber);
   box-shadow:0 0 0 1px var(--glow),0 0 12px var(--glow-strong);
 }
@@ -400,12 +441,14 @@ nav.cmds button.on,.seg button.on{box-shadow:0 0 14px var(--glow)}
 }
 .links .v{
   font-size:13.5px;line-height:1.5;letter-spacing:-.01em;color:var(--mid);
-  padding:11px 16px 11px 18px;
+  padding:11px 16px 11px 18px;transition:color .15s;
 }
 .links a.p .v{color:var(--amber);font-weight:500;font-size:14.5px}
 .links a[target] .v::after{content:'↗';font-size:.8em;margin-left:3px;opacity:.7}
-.links a:hover{background:var(--bg-2)}
-.links a:hover .v{color:var(--amber)}
+@media (hover:hover) and (pointer:fine){
+  .links a:hover{background:var(--bg-2)}
+  .links a:hover .v{color:var(--amber)}
+}
 .status{
   display:flex;flex-wrap:wrap;gap:0;border-top:var(--hair) solid var(--line);
   font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
@@ -421,7 +464,9 @@ nav.cmds button.on,.seg button.on{box-shadow:0 0 14px var(--glow)}
 .note{font-family:var(--mono);font-size:10.5px;line-height:1.75;color:var(--dim);margin:18px 0 0}
 .note a{color:var(--amber);text-decoration:none}
 a.ext{color:var(--amber);text-decoration:none;border-bottom:var(--hair) dotted var(--amber-dim)}
-a.ext:hover{border-bottom-style:solid;background:var(--bg-2)}
+@media (hover:hover) and (pointer:fine){
+  a.ext:hover{border-bottom-style:solid;background:var(--bg-2)}
+}
 a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 
 @media (max-width:620px){
@@ -453,7 +498,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
      hamburger they cost none, and each row gets a full-width tap target. */
   .hamb{display:inline-flex;align-items:center;justify-content:center}
   nav.cmds{
-    display:none;position:fixed;top:var(--chrome-h,45px);left:0;right:0;z-index:21;margin:0;
+    position:fixed;top:var(--chrome-h,45px);left:0;right:0;z-index:21;margin:0;
     grid-template-columns:1fr;border-top:var(--hair) solid var(--line);
     border-bottom:var(--hair) solid var(--line-2);
     max-height:calc(100vh - var(--chrome-h,45px));overflow-y:auto;
@@ -461,7 +506,19 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
        the page, and at --bar-a the masthead read through the rows */
     background:var(--bg);
   }
-  body.navopen nav.cmds{display:grid}
+  /* the drawer used to appear on a display toggle, which popped in over a
+     page whose sections ease. It wipes down now instead. clip-path, not a
+     translate: the bar sits above the chrome in the stack (z 21 over 20) and
+     the chrome is only 90% opaque, so anything that moves *through* it shows
+     through it. A clip cannot escape its own box. visibility is what leaves
+     the tab order, delayed so it does not cut the closing wipe short. */
+  nav.cmds{
+    display:grid;visibility:hidden;clip-path:inset(0 0 100% 0);
+    transition:clip-path .24s var(--ease-drawer),visibility 0s linear .24s;
+  }
+  body.navopen nav.cmds{
+    visibility:visible;clip-path:inset(0 0 0 0);transition-delay:0s;
+  }
   nav.cmds button{
     text-align:left;padding:15px var(--pad);font-size:12px;
     border-right:0;border-bottom:var(--hair) solid var(--line);
@@ -517,12 +574,14 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
      order — display:none would kill the transition. */
   .pbody-w{
     display:grid;grid-template-rows:1fr;
-    transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1);
+    transition:grid-template-rows .3s var(--ease-drawer);
   }
   .pbody{overflow:hidden;min-height:0;visibility:visible}
-  .panel.folded .pbody-w{grid-template-rows:0fr}
+  /* asymmetric on purpose: opening is the reader waiting on content, closing
+     is the page answering. Slow where they decide, fast where we respond. */
+  .panel.folded .pbody-w{grid-template-rows:0fr;transition-duration:.22s}
   body.nofoldanim .pbody-w,body.nofoldanim .pbody{transition:none}
-  .panel.folded .pbody{visibility:hidden;transition:visibility 0s linear .3s}
+  .panel.folded .pbody{visibility:hidden;transition:visibility 0s linear .22s}
   .panel.folded{padding-bottom:0}
   /* the first thing inside a section shouldn't add a second gap under the rule */
   .pbody>:first-child{margin-top:16px}
@@ -570,15 +629,15 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   <!-- ============ MASTHEAD ============ -->
   <div class="mast">
     <p class="prompt"><span class="sig">➜</span> whoami</p>
-    <h1>janmeet singh makkar — ai pm building <span class="u">enterprise agent platforms</span> that survive production<span class="cursor" aria-hidden="true"></span></h1>
+    <h1>janmeet singh makkar — i make ai assistants <span class="u">reliable enough</span> to put in front of real customers<span class="cursor" aria-hidden="true"></span></h1>
 
     <div class="spec">
-      <div class="r"><div class="k">role</div><div class="v"><b>founding pm, ai</b> · <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">nugget</a> (eternal ltd.)</div></div>
-      <div class="r"><div class="k">owns</div><div class="v">adherence · latency · cost/interaction · eval coverage</div></div>
-      <div class="r"><div class="k">surface</div><div class="v">text agents · voice agents · orchestration · retrieval · evals</div></div>
+      <div class="r"><div class="k">role</div><div class="v"><b>founding pm, ai</b> · <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">nugget</a> — inside eternal ltd. (zomato · blinkit)</div></div>
+      <div class="r"><div class="k">owns</div><div class="v">does it follow the rules · is it fast · what it costs · how well it's tested</div></div>
+      <div class="r"><div class="k">works on</div><div class="v">chat agents · voice agents · the ai models behind them · the tests that keep them honest</div></div>
       <div class="r"><div class="k">education</div><div class="v">iit ropar — b.tech computer science</div></div>
       <div class="r"><div class="k">location</div><div class="v">gurugram, in · ist utc+5:30</div></div>
-      <div class="r"><div class="k">currently</div><div class="v"><span class="live">● building</span> — enterprise agents at nugget · pulling apart whatever ships next</div></div>
+      <div class="r"><div class="k">currently</div><div class="v"><span class="live">● building</span> — the ai agents at nugget · taking apart the ones i didn't build</div></div>
     </div>
 
   </div>
@@ -589,7 +648,9 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 
     <div class="chat">
       <div class="turn u"><span class="who">➜</span><span class="msg">so what do you actually own?</span></div>
-      <div class="turn"><span class="who">◆</span><span class="msg">Four numbers that decide whether an agent is shippable: <strong>adherence, latency, cost per interaction, and eval coverage</strong>. Everything else on this site is downstream of those. I'm founding AI PM at <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">Nugget</a>, an enterprise agent platform — an AI operating system for enterprise support and operations — incubated inside Eternal, the group behind Zomato and Blinkit. Agent orchestration, retrieval and knowledge grounding, eval harnesses, model selection and evaluation of open-weight models, and the inference economics under all of it. Text and voice. Before this, four years of consumer-scale ranking and monetization work at Zomato and Blinkit — which is where I learned that latency is a product decision, not an engineering detail.</span></div>
+      <div class="turn"><span class="who">◆</span><span class="msg">The parts of a conversational agent that decide whether it actually works. <a class="ext" href="https://www.nugget.com/" target="_blank" rel="noopener">Nugget</a>'s agent handles a company's customer support — in chat and over the phone — in place of a support team. Underneath it are separate modules, and I own the ones that decide the outcome: the piece that works out what step to take next, the piece that looks up the company's own policies before it answers, the piece that chooses which AI model handles which conversation and what that costs, and the tests that catch the agent doing something it shouldn't before a customer does. <strong>Four questions run all of it: does it follow the rules, is it fast enough, what does one conversation cost, and how much of it have we actually tested.</strong> I'm the founding AI product manager on it. Nugget is built inside Eternal — the group behind Zomato and Blinkit.</span></div>
+      <div class="turn u"><span class="who">➜</span><span class="msg">how do you know which part is broken?</span></div>
+      <div class="turn"><span class="who">◆</span><span class="msg">I take it apart until I do. An agent that goes wrong doesn't crash. It sounds fluent, quietly skips a step, and the conversation still looks fine from the outside — so I read the transcripts turn by turn until I can name the exact step it dropped. Most of what I've built came out of that habit. I built the testing system because I was tired of guessing. I moved the company-knowledge layer into a screen the support team can edit themselves, instead of filing a ticket to engineering every time a policy changes. I build the prototype myself rather than describe it in a document. Before AI, four years on ranking and ads at Zomato and Blinkit at consumer scale — which is where I learned that how fast a thing answers is a product decision, not an engineering detail.</span></div>
       <div class="sugg">
         <button type="button" data-go="systems">➜ show me the systems</button>
         <button type="button" data-go="artifacts">➜ what's public?</button>
@@ -601,17 +662,17 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
 
     <div class="meter">
       <div class="meter-h">
-        <h3>every agent turn has to fit inside this</h3>
+        <h3>what has to happen before the customer hears an answer</h3>
         <div class="seg" role="group" aria-label="modality">
           <button type="button" data-mode="text" class="on">text</button>
           <button type="button" data-mode="voice">voice</button>
         </div>
       </div>
       <div class="ladder" id="ladder" aria-live="polite"></div>
-      <div class="meter-f">illustrative budget, not a benchmark. every product decision on an agent gets paid for out of this line — and voice pays twice.</div>
+      <div class="meter-f">illustrative, not a benchmark. roughly one second, and every feature anyone asks for gets paid for out of it — voice pays twice, because it also has to listen and speak.</div>
     </div>
 
-    <p class="note">technical enough to own architecture trade-offs with engineering. commercially fluent enough to defend them to whoever is paying for the tokens.</p>
+    <p class="note">technical enough to argue the design with the engineers who build it. commercial enough to defend that design to whoever is paying the bill.</p>
   </div>
 
   <!-- ============ 02 SYSTEMS ============ -->
@@ -676,7 +737,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
           <dl class="kv">
             <div><dt>problem</dt><dd>Speech-to-speech models collapse the latency ladder — and give up the observability and per-hop control that a cascaded VAD→STT→LLM→TTS pipeline gives you.</dd></div>
             <div><dt>decision</dt><dd><strong>Price the trade instead of benchmarking it.</strong> What you lose in barge-in control, dialogue-state inspection and per-hop debuggability, set against what you gain in turn latency — segmented by agent class rather than decided globally.</dd></div>
-            <div><dt>result</dt><dd>Went into the platform roadmap as a per-class decision: which agents could move, and which couldn't yet.</dd></div>
+            <div><dt>result</dt><dd>Shipped as a per-class roadmap decision: which agent classes could move to speech-to-speech, and which had to keep the cascade.</dd></div>
           </dl>
         </div>
       </article>
@@ -686,8 +747,8 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   <!-- ============ 03 ARTIFACTS ============ -->
   <div class="panel" id="p-artifacts" tabindex="-1">
     <div class="rule"><b>03</b> artifacts · public</div>
-    <p class="lead">things you can open and <span class="u">judge for yourself</span>.</p>
-    <p class="sub">Production work sits behind a login. These don't.</p>
+    <p class="lead">work you'll be able to open and <span class="u">judge for yourself</span>.</p>
+    <p class="sub">Production work sits behind a login, so these four are being written to stand in for it. None of them is finished yet. If you want the argument before they land, email me and I'll walk you through a real failing trace, span by span.</p>
 
     <div class="cards">
       <!-- REPLACE href + status on each entry as they ship. This tab is the whole point of the site. -->
@@ -791,7 +852,7 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   <div class="panel" id="p-stack" tabindex="-1">
     <div class="rule"><b>05</b> stack</div>
     <p class="lead">what i can hold my own on with <span class="u">your engineers</span>.</p>
-    <p class="sub">Not a keyword list — these are the areas where I'd expect to be questioned and be fine.</p>
+    <p class="sub">Six areas where I'd expect an engineer to push. Ask about any of them.</p>
 
     <div class="kit">
       <div class="r"><div class="k">agent systems</div><div class="v">Agentic workflow and tool-calling design, prompt and context architecture, multi-step orchestration, dialogue and task state, guardrails, red-teaming.</div></div>
@@ -844,14 +905,13 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
       </div>
     </div>
 
-    <p class="note">running is also why the race-prep coach in <a href="?tab=artifacts">artifacts</a> exists — the training plan i wanted didn't survive a missed week.</p>
   </div>
 
   <!-- ============ CONTACT ============ -->
   <div class="panel" id="p-contact">
     <div class="rule"><b>07</b> contact</div>
-    <p class="lead">if you're building something in ai that <span class="u">shouldn't work yet</span>, i want to see it.</p>
-    <p class="sub">I spend most of my spare cycles on whatever model, agent framework or product just shipped — usually breaking it to find where it stops holding. Happy to compare notes on orchestration, evals or inference economics, look at what you're building, or talk about a role. Email is the fastest route.</p>
+    <p class="lead">show me an agent that isn't working and i'll tell you <span class="u">which of the four numbers</span> is the reason.</p>
+    <p class="sub">Send a failing trace, a spec, a demo link, or one paragraph on what's going wrong. What comes back is an actual read — which failure class it looks like, what I'd measure first, and what I'd stop building — not an invitation to book a call. And if what you're building needs someone who owns those four numbers full time rather than someone with an opinion about them, say so, and we'll talk about it properly.</p>
     <div class="links">
       <a class="p" href="mailto:hello@janmeet.pm"><span class="k">email</span><span class="v">hello@janmeet.pm</span></a>
       <a href="https://linkedin.com/in/janmeet-s-makkar" target="_blank" rel="noopener"><span class="k">linkedin</span><span class="v">/in/janmeet-s-makkar</span></a>
@@ -860,9 +920,9 @@ a.ext::after{content:'↗';font-size:.8em;margin-left:2px;opacity:.7}
   </div>
 
   <div class="status">
-    <span class="hl">always exploring new ai</span>
+    <span class="hl">breaking whatever shipped this week</span>
     <span class="who">janmeet-s-makkar</span>
-    <span id="st-tab">01/06 about</span>
+    <span id="st-tab">01/07 about</span>
     <span>ist utc+5:30</span>
   </div>
 
@@ -1025,7 +1085,7 @@ function fold(name,open){
      about is folded. Re-fit once it is on screen. */
   if(name==='about'&&open&&mode) requestAnimationFrame(function(){
     var w=fitW();
-    if(w!==lastW){lastW=w;render(mode);}
+    if(w!==lastW){lastW=w;render(mode,true);}
   });
 }
 
@@ -1093,7 +1153,19 @@ var DATA={
 };
 var mode='text', timer=null, lastW=0;
 var ladder=document.getElementById('ladder');
-var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var rmq=window.matchMedia('(prefers-reduced-motion: reduce)');
+var reduce=rmq.matches;
+/* flipping the OS setting mid-session used to leave the ladder typing */
+if(rmq.addEventListener) rmq.addEventListener('change',function(e){
+  reduce=e.matches;
+  render(mode,true);
+});
+/* The type-in is a one-shot reveal, not the ladder's idle behaviour. Every
+   other path into render() — modality switch, width re-fit, re-opening the
+   about fold — paints the finished state, because those are repeated actions
+   and replaying a ~900ms animation makes the control feel slow the second
+   time. */
+var typed=false;
 
 /* The row is LBL + W + 2 + MSW monospace cells wide. On a phone that
    overran the frame and pushed the ms column off-screen behind a
@@ -1117,7 +1189,7 @@ function pad(s,n){s=String(s);while(s.length<n)s+=' ';return s;}
 function lpad(s,n){s=String(s);while(s.length<n)s=' '+s;return s;}
 function rep(c,n){var o='';for(var i=0;i<n;i++)o+=c;return o;}
 
-function render(m){
+function render(m,instant){
   mode=m;
   if(timer){clearInterval(timer);timer=null;}
   W=fitW();lastW=W;
@@ -1151,7 +1223,7 @@ function render(m){
       '  <span class="ms">'+lpad(sum+'ms',MSW)+'</span>';
   }
 
-  if(reduce){
+  if(reduce||instant){
     plan.forEach(function(p,i){paint(i,p.n);});
     paintSum(true);
     return;
@@ -1171,7 +1243,7 @@ function render(m){
 document.querySelectorAll('.seg button').forEach(function(b){
   b.addEventListener('click',function(){
     document.querySelectorAll('.seg button').forEach(function(x){x.classList.toggle('on',x===b);});
-    render(b.dataset.mode);
+    render(b.dataset.mode,true);
   });
 });
 
@@ -1187,7 +1259,7 @@ window.addEventListener('resize',function(){
        URL-bar collapse, and syncFolds() is idempotent. */
     syncFolds();
     var w=fitW();
-    if(w!==lastW){lastW=w;render(mode);}
+    if(w!==lastW){lastW=w;render(mode,true);}
   },160);
 });
 
@@ -1195,7 +1267,20 @@ window.addEventListener('resize',function(){
 var q=(location.search.match(/[?&]tab=([a-z]+)/)||[])[1]||'about';
 measureStick();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measureStick);
-render('text');
+render('text',true);
+/* On a ?tab=contact deep link the meter used to type itself out offscreen and
+   the reader never saw the one animated element on the page. Reveal it when
+   it is in view, once. */
+(function(){
+  var meter=document.querySelector('.meter');
+  if(!meter||!window.IntersectionObserver){typed=true;return;}
+  var io=new IntersectionObserver(function(es){
+    if(!es[0].isIntersecting||typed) return;
+    typed=true;io.disconnect();
+    if(!reduce) render(mode,false);
+  },{threshold:.35});
+  io.observe(meter);
+})();
 /* exactly one section open on arrival: the deep-linked one, else about */
 order.forEach(function(n){openNames[n]=(n===q);});
 syncFolds();
